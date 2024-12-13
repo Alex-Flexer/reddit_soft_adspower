@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login RS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="../static/styles/form.css">
+    <link rel="stylesheet" href="../static/styles/buy-form.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet" ; </head>
+
+<body>
+    <div class="reg_box">
+        <div class="headline">
+            <h1>Subscribe</h1>
+        </div>
+
+        <div class="form">
+            <div class="section">
+                <h2>Your tg-nickname: </h2>
+                <h2 id="my_email"></h2>
+            </div>
+            <div class="section">
+                <h2>Crypto token: </h2>
+                <a id="copy_crypto_token_button" onclick="copy_token()">copy</a>
+            </div>
+            <div class="section">
+                <h2>Subscription price: </h2>
+                <h2 id="price">NaN</h2>
+            </div>
+        </div>
+        <button onclick="check_transaction()" class="continue_button valiable">Check transaction</button>
+        <button onclick="redirect_to_login(this)" class="alternative_button valiable">That's not me</button>
+        <div class="error_place_wrapper">
+            <p id="error_place"></p>
+        </div>
+    </div>
+
+    <button onclick="window.history.go(-1);" class="back_button">&lt</button>
+
+</body>
+<script src="../static/scripts/buy_form.js"></script>
+
+</html>

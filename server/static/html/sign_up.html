@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register RS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="../static/styles/form.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet" ; </head>
+
+<body>
+    <div class="reg_box">
+        <div class="headline">
+            <h1>Sing Up</h1>
+        </div>
+
+        <div class="form">
+            <input type="email" id="user_email" placeholder="Enter your tg-nick (without @)">
+
+            <input type="password" id="user_password" placeholder="Сome up with a strong password">
+
+            <input type="password" id="user_confirmed_password" placeholder="Confirm your password">
+        </div>
+
+        <button onclick="sign_up()" class="continue_button valiable">Continue</button>
+        <button onclick="window.location.replace('/login')" class="alternative_button valiable">Log In</button>
+        <div class="error_place_wrapper">
+            <p id="error_place"></p>
+        </div>
+    </div>
+
+    <button onclick="window.history.go(-1);" class="back_button">&lt</button>
+
+</body>
+<script src="../static/scripts/sign_up.js"></script>
+
+</html>

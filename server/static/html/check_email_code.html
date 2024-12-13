@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login RS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="../static/styles/form.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet";
+</head>
+
+<body>
+    <div class="reg_box">
+        <div class="headline">
+            <h1>Checking Confirmation Code</h1>
+            <h3>Log in our 
+                <a href="https://t.me/redditsyndicate_bot">tg-bot</a> and
+                 get your confirmation code</h3>
+        </div>
+        
+        <div class="form">
+            <input type="text" id="user_code" placeholder="Enter сonfirmation code">
+        </div>
+        
+        <button onclick="check_code()" class="continue_button valiable">Confirm Email Code</button>
+        <button onclick="change_account()" class="alternative_button valiable">Change Account</button>
+        <div class="error_place_wrapper"><p id="error_place"></p></div>
+    </div>
+
+    <button onclick="window.history.go(-1);" class="back_button">&lt</button>
+
+</body>
+<script src="../static/scripts/check_email_code.js"></script>
+</html>
