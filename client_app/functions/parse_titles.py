@@ -1,8 +1,7 @@
 from time import sleep
-import random
 import re
 
-from selenium import webdriver
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.webdriver import WebDriver as chrome_webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as firefox_webdriver
 
@@ -14,19 +13,14 @@ from log_windows import LogWindow
 WebDriver = chrome_webdriver | firefox_webdriver
 
 
-def get_random_int(max_value):
-    return random.randint(0, max_value - 1)
-
-
 def parse_titles(subreddit: str) -> str:
-    driver = webdriver.Chrome()
+    driver = Chrome()
     log_window = LogWindow()
 
-    post_url1 = f'http://www.reddit.com/r/{subreddit}/new'
-    sleep(3)
+    post_url = f'http://www.reddit.com/r/{subreddit}/new'
 
-    driver.get(post_url1)
-    sleep(3)
+    driver.get(post_url)
+    sleep(2)
 
     html = driver.page_source
     titles = re.findall(r'aria-label="([^"]*)"', html)
@@ -42,15 +36,17 @@ def parse_titles(subreddit: str) -> str:
         'Locked post', 'Sticked post', 'Archived post', 'Reddit resources', 'Primary', 'Community information',
         'Edit user flair', "'", '"', 'New rule announcement.',
         f'r/{subreddit} - Join the official amihot Discord server ', 'Join the official amihot Discord server ',
-        f'r/{subreddit} - New rule announcement.', '[', ']'
+        f'r/{subreddit} - New rule announcement.', 'Back', 'Close', 'Promotion', 'Stickied post'
     }
     filtered_titles = [title for title in titles if title not in to_remove]
-    filtered_titles = emoji_pattern.sub(r'', str(filtered_titles))
+    for i, title in enumerate(filtered_titles):
+        filtered_titles[i] = emoji_pattern.sub(r'', title)
+
     if not filtered_titles:
         log_window.log_message(f"No titles found on the subreddit '{subreddit}'")
         filtered_titles = 'default title'
 
-    return filtered_titles
+    print('\n'.join(filtered_titles))
 
 
 def tkinter_parse_titles():

@@ -44,8 +44,8 @@ PATTERN_ERROR_MESSAGE =\
     "div.items-baseline:nth-child(2) > r-form-validation-message:nth-child(1)"
 PATTERN_FLAIR_BUTTON =\
     "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
-PATTERN_TITLE_INPUT = ("/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/"
-                       "section/div[1]/faceplate-tracker/faceplate-textarea-input")
+PATTERN_SUBMIT_BUTTON = "#submit-post-button"
+PATTERN_TITLE_INPUT = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/section/div[1]/faceplate-tracker/faceplate-textarea-input"
 PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
 PATTERN_FLAIR_SPANS =\
     "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
@@ -125,6 +125,9 @@ def post(
     if flair is None and '*' in flair_button_text:
         return "expected flairs", False
 
+    submit_button: WebElement = driver.find_element(
+        By.CSS_SELECTOR, PATTERN_SUBMIT_BUTTON)
+
     if flair is not None:
         original_flair = flair.lower().strip()
 
@@ -157,7 +160,26 @@ def post(
         click(mouse, add_flair_button)
         rand_sleep()
 
-        return "Was successfully prepared", True
+    click(mouse, submit_button)
+    rand_sleep()
+
+    start_time = datetime.now()
+    while datetime.now() - start_time < timedelta(seconds=20) and "submit" in driver.current_url:
+        continue
+
+    if "submit" in driver.current_url:
+        error_message: list[WebElement] =\
+            driver.find_element(By.CSS_SELECTOR, PATTERN_ERROR_MESSAGE).\
+            shadow_root.find_elements(By.CSS_SELECTOR, "p.m-0")
+
+        print(error_message[0])
+
+        if len(error_message) != 0 and error_message[0].text != "":
+            return error_message[0].text, False
+        else:
+            return "unknown post error", False
+    else:
+        return "was successfully posted", True
 
 
 def big_post(
@@ -297,7 +319,7 @@ def big_post(
     logger.log_message("Posting is finished!")
 
 
-def tkinter_reddit_big_post():
+def tkinter_reddit_auto_post():
 
     root = tk.Tk()
 
@@ -429,4 +451,4 @@ def tkinter_reddit_big_post():
 
 
 if __name__ == "__main__":
-    tkinter_reddit_big_post()
+    tkinter_reddit_auto_post()

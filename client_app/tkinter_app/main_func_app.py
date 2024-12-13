@@ -1,18 +1,17 @@
-from keyring import get_password
 import tkinter as tk
-from tkinter import messagebox
 from multiprocessing import Process
 import sys
 
 sys.path.insert(1, 'functions')
 
-from big_post_with_delay import tkinter_reddit_big_post_with_delay
-from farm_karma_with_delay import tkinter_reddit_farm_with_delay
 from image_editing import uniq_tkinter
 from converters import tkinter_converters
 from big_post import tkinter_reddit_big_post
-from farm_carma import tkinter_reddit_farm
-from db_funcs import add_account
+from parse_titles import tkinter_parse_titles
+from acc_title_parse import tkinter_parse_acc_titles
+from acc_subs_parse import tkinter_parse_acc_subs
+from username_parse import tkinter_parse_username
+from auto_post import tkinter_reddit_auto_post
 
 
 def create_window():
@@ -60,11 +59,12 @@ def create_window():
     label.pack(pady=10)
 
     buttons = [
-        ("Add Reddit-Account", add_reddit_account),
-        ("Farm Karma", tkinter_reddit_farm),
-        ("Post Auto", tkinter_reddit_big_post),
-        ("Farm Karma with delay", tkinter_reddit_farm_with_delay),
-        ("Post Auto with delay", tkinter_reddit_big_post_with_delay),
+        ("Parse Titles From User Account", tkinter_parse_acc_titles),
+        ("Parse Subs From User Account", tkinter_parse_acc_subs),
+        ("Parse Titles From Subreddit", tkinter_parse_titles),
+        ("Parse Usernames From Subreddit", tkinter_parse_username),
+        ("Prepareation for post", tkinter_reddit_big_post),
+        ("Full post", tkinter_reddit_auto_post),
         ("Uniqueize photo or video", uniq_tkinter),
         ("Converters", tkinter_converters),
     ]
@@ -83,64 +83,6 @@ def create_window():
         button.pack(pady=10)
 
     root.mainloop()
-
-
-def add_reddit_account():
-    login_window = tk.Tk()
-    login_window.title("User Credentials")
-
-    tk.Label(login_window, text="Email:").grid(
-        row=0, column=0, padx=10, pady=5)
-    entry_login = tk.Entry(login_window)
-    entry_login.grid(row=0, column=1, padx=10, pady=5)
-
-    tk.Label(login_window, text="Password:").grid(
-        row=1, column=0, padx=10, pady=5)
-    entry_reddit_password = tk.Entry(login_window, show="*")
-    entry_reddit_password.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(login_window, text="Proxy Host:").grid(
-        row=2, column=0, padx=10, pady=5)
-    entry_host = tk.Entry(login_window)
-    entry_host.grid(row=2, column=1, padx=10, pady=5)
-
-    tk.Label(login_window, text="Proxy Port:").grid(
-        row=3, column=0, padx=10, pady=5)
-    entry_port = tk.Entry(login_window)
-    entry_port.grid(row=3, column=1, padx=10, pady=5)
-
-    tk.Label(login_window, text="Proxy User:").grid(
-        row=4, column=0, padx=10, pady=5)
-    entry_user = tk.Entry(login_window)
-    entry_user.grid(row=4, column=1, padx=10, pady=5)
-
-    tk.Label(login_window, text="Proxy Password:").grid(
-        row=5, column=0, padx=10, pady=5)
-    entry_password = tk.Entry(login_window, show="*")
-    entry_password.grid(row=5, column=1, padx=10, pady=5)
-
-    def submit_account_credentials():
-        login = entry_login.get()
-        password = entry_reddit_password.get()
-        proxy_host = entry_host.get()
-        proxy_port = entry_port.get()
-        proxy_user = entry_user.get()
-        proxy_password = entry_password.get()
-
-        if not all([login, password, proxy_host, proxy_port, proxy_user, proxy_password]):
-            messagebox.showerror("Error", "Please fill all fields")
-            return
-
-        user_email = get_password("user", "email")
-        add_account(user_email, login, password, proxy_host,
-                    proxy_port, proxy_user, proxy_password)
-
-        login_window.destroy()
-
-    tk.Button(login_window, text="Submit", command=submit_account_credentials).grid(
-        row=6, column=0, columnspan=2, pady=10)
-    login_window.mainloop()
-
 
 if __name__ == "__main__":
     create_window()
