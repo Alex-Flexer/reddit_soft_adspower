@@ -351,7 +351,7 @@ async def add_reddit_account(request: Request) -> JSONResponse:
             response_json['massage'] =\
                 'Reddit account with this email does not exist'
         else:
-            db.add_new_reddit_account(**json)
+            db.add_subscription(**json)
             response_json['result'] = True
             response_json["massage"] = ""
 

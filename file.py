@@ -1,31 +1,33 @@
-from seleniumwire import webdriver
-from selenium.webdriver.chrome.options import Options
-import time
+from aiogram import Bot, Dispatcher, types
+import asyncio
+
+API_TOKEN = '8078572509:AAHT8WKFdUmViX_LC9_qRRebtsVpPxtkPN4'
+
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher()
+
+# Define a new keyboard layout
+keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard.add(types.KeyboardButton('Button 1'))
+keyboard.add(types.KeyboardButton('Button 2'))
+
+@dp.message_handler(commands=['start'])
+async def send_welcome(message: types.Message):
+    # Send a message with a keyboard layout
+    msg = await message.reply("Hi!\nI'm EchoBot!\nPowered by aiogram.", reply_markup=keyboard)
+    
+    # Store the message ID
+    message_id = msg.message_id
+    
+    # Edit the message's reply markup after 5 seconds
+    await asyncio.sleep(5)
+    await bot.edit_message_reply_markup(chat_id=message.chat.id, message_id=message_id, reply_markup=None)
 
 
-proxy_user = 'zavalishinn26'
-proxy_password = 'uKvcZHash5'
-proxy_host = '45.85.204.182'
-proxy_port = '50100'
+async def main():
+    await dp.start_polling(bot)
 
 
-def driver_proxy(proxy_host, proxy_port, proxy_user, proxy_password):
-    proxy_options = {
-        'proxy': {
-            'http': f'http://{proxy_user}:{proxy_password}@{proxy_host}:{proxy_port}',
-            'https': f'http://{proxy_user}:{proxy_password}@{proxy_host}:{proxy_port}',
-            'no_proxy': 'localhost,127.0.0.1'
-        }
-    }
-    o = Options()
-    o.add_argument("--headless")
-    driver = webdriver.Chrome(seleniumwire_options=proxy_options, options=o)
-
-    return driver
-
-
-driver = driver_proxy(proxy_host, proxy_port, proxy_user, proxy_password)
-driver.get('https://2ip.ru')
-time.sleep(10)
-print(driver.page_source)
-driver.quit()
+if __name__ == "__main__":
+    # logging.basicConfig(stream=sys.stdout)
+    asyncio.run(main())

@@ -1,18 +1,16 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from typing import Type
 from datetime import date, timedelta
 from secrets import token_hex
+from itertools import chain
 
-from database.database_model import engine, User, RedditAccount
+try:
+    from database.database_model import engine, User, RedditAccount, Subscription
+except ModuleNotFoundError:
+    from database_model import engine, User, RedditAccount, Subscription
 
 session = Session(engine)
-
-
-def clear_db():
-    for user in get_all_users():
-        delete_user_by_email(str(user.email))
 
 
 def check_user_exists(email: str) -> bool:
@@ -23,20 +21,14 @@ def check_user_confirmed(email: str) -> bool:
     return get_user_by_email(email=email).confirmed_status
 
 
-def check_reddit_account_exists(email: str) -> bool:
-    return not (get_reddit_account_by_email(email=email) is None)
+def check_reddit_account_exists(ads_id: str) -> bool:
+    return not (get_reddit_account(ads_id) is None)
 
 
 def check_user_password(email: str, password: str) -> bool:
     if not check_user_exists(email=email):
         return False
     return bool(get_user_by_email(email=email).user_password == password)
-
-
-def check_reddit_password(email: str, password: str) -> bool:
-    if not check_reddit_account_exists(email=email):
-        return False
-    return bool(get_reddit_account_by_email(email).password == password)
 
 
 def check_authorization_code(email: str, authorization_code: str) -> bool:
@@ -54,22 +46,13 @@ def check_user_credentials(email: str, password: str, token: str) -> bool:
     return user.token == token and user.user_password == password
 
 
-def check_user_subscription(email: str):
-    if not check_user_exists(email):
-        return False
-
-    subscription_end_date = get_user_by_email(email).subscription_end_date
-    return (subscription_end_date is not None) and\
-           (subscription_end_date >= date.today())
-
-
 def get_user_by_email(email: str) -> User | None:
     return session.scalar(select(User).where(User.email == email))
 
 
-def get_reddit_account_by_email(email: str) -> RedditAccount | None:
+def get_reddit_account(ads_id: str) -> RedditAccount | None:
     return session.scalar(
-        select(RedditAccount).where(RedditAccount.email == email)
+        select(RedditAccount).where(RedditAccount.ads_id == ads_id)
     )
 
 
@@ -79,22 +62,30 @@ def get_user_active_subscription_price(email: str) -> float:
     return get_user_by_email(email).active_subscription_price
 
 
-def get_all_users() -> list[Type[User]]:
+def get_all_users() -> list[User]:
     return session.query(User).all()
 
 
-def get_proxy(email: str) -> dict[str, str | int]:
-    acc = get_reddit_account_by_email(email=email)
-    proxy_dict = {'host': acc.proxy_host,
-                  'port': acc.proxy_port,
-                  'user': acc.proxy_user,
-                  'password': acc.proxy_password}
-    return proxy_dict
-
-
 def get_reddit_accounts(user_email: str) -> list[RedditAccount]:
+    refresh_subscriptions(user_email)
+
     user = get_user_by_email(user_email)
-    return user.reddit_accounts
+    subscriptions: list[Subscription] = user.subscriptions
+
+    accounts = list(chain.from_iterable(
+        [[acc for acc in sub.reddit_accounts] for sub in subscriptions]
+    ))
+
+    return accounts
+
+
+def get_amount_active_reddit_acounts(user_email: str) -> int:
+    return len(get_reddit_accounts(user_email))
+
+
+def get_subscriptions(user_email: str) -> list[Subscription]:
+    refresh_subscriptions(user_email)
+    return get_user_by_email(user_email).subscriptions
 
 
 def add_new_user(email: str, user_password: str) -> bool:
@@ -111,48 +102,44 @@ def add_new_user(email: str, user_password: str) -> bool:
     return True
 
 
-def add_new_reddit_account(
-    user_email: str,
-    reddit_email: str,
-    reddit_password: str,
-    host: str,
-    port: int,
-    user: str,
-    password: str
-) -> bool:
-    if not check_user_exists(user_email) or\
-            check_reddit_account_exists(reddit_email):
+def add_subscription(user_email: str, amount: int) -> bool:
+    if not check_user_exists(user_email):
         return False
 
-    user_from_db = get_user_by_email(user_email)
-    session.add(RedditAccount(
-        owner_id=user_from_db.id,
-        email=reddit_email,
-        password=reddit_password,
-        proxy_host=host,
-        proxy_port=port,
-        proxy_user=user,
-        proxy_password=password
+    user = get_user_by_email(user_email)
+    session.add(Subscription(
+        owner_id=user.id,
+        end_date=date.today() + timedelta(30),
+        amount_accounts_limit=amount
+
     ))
     session.commit()
     return True
 
 
-def renew_subscription(email: str) -> bool:
-    if not check_user_exists(email):
+def add_reddit_account(user_email: str, ads_id: str) -> bool:
+    if not check_user_exists(user_email):
         return False
 
-    user = get_user_by_email(email)
+    if check_reddit_account_exists(ads_id):
+        return False
 
-    end_date = user.subscription_end_date
-    if end_date is None:
-        end_date = date.today() + timedelta(days=33)
-    else:
-        end_date += timedelta(days=30)
-    
-    session.query(User).filter_by(email=email).\
-        update({"subscription_end_date": end_date})
+    subscriptions = get_subscriptions(user_email)
+    new_reddit_account = None
 
+    for sub in subscriptions:
+        accounts: list[RedditAccount] = sub.reddit_accounts
+        if len(accounts) < sub.amount_accounts_limit:
+            new_reddit_account = RedditAccount(
+                subscription_id=sub.id,
+                ads_id=ads_id
+            )
+            break
+
+    if new_reddit_account is None:
+        return False
+
+    session.add(new_reddit_account)
     session.commit()
     return True
 
@@ -190,17 +177,6 @@ def update_subscription_price(email: str, price: float) -> bool:
     return True
 
 
-def update_telegram_id(email: str, new_id: int) -> bool:
-    if not check_user_exists(email):
-        return False
-
-    session.query(User).filter_by(email=email).\
-        update({"telegram_id": new_id})
-
-    session.commit()
-    return True
-
-
 def update_user_token(email: str) -> str | None:
     if not check_user_exists(email):
         return None
@@ -213,7 +189,14 @@ def update_user_token(email: str) -> str | None:
     return new_token
 
 
-def delete_user_by_email(email: str) -> None:
+def refresh_subscriptions(email: str) -> None:
+    subscriptions = get_user_by_email(email).subscriptions
+    for sub in subscriptions:
+        if sub.end_date < date.today():
+            delete_subscription(sub.id)
+
+
+def delete_user(email: str) -> None:
     if not check_user_exists(email=email):
         return False
 
@@ -222,10 +205,18 @@ def delete_user_by_email(email: str) -> None:
     return True
 
 
-def delete_reddit_account_by_email(email: str) -> None:
-    if check_reddit_account_exists(email=email):
-        session.query(RedditAccount).filter_by(email=email).delete()
-        session.commit()
+def delete_subscription(subscription_id: int) -> None:
+    session.query(Subscription).filter_by(id=subscription_id).delete()
+    session.commit()
+
+
+def delete_reddit_account(ads_id: str) -> None:
+    if not check_reddit_account_exists(ads_id):
+        return False
+
+    session.query(RedditAccount).filter_by(ads_id=ads_id).delete()
+    session.commit()
+    return True
 
 
 def show_db(db_name) -> None:
@@ -233,4 +224,6 @@ def show_db(db_name) -> None:
 
 
 if __name__ == "__main__":
-    show_db(User)
+    add_subscription("alexandr_flexer", 3)
+    # show_db(User)
+    show_db(Subscription)

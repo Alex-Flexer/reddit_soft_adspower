@@ -24,25 +24,19 @@ class User(Base):
 
     confirmed_status: Mapped[bool]
 
-    current_price: Mapped[Optional[float]]
-
     active_subscription_price: Mapped[Optional[int]]
 
-    subscription_end_date: Mapped[Optional[date]]
-
-    telegram_id: Mapped[Optional[int]]
-
-    token: Mapped[Optional[str]]
-
-    reddit_accounts: Mapped[List["RedditAccount"]] = relationship(
+    subscriptions: Mapped[List["Subscription"]] = relationship(
         back_populates="owner", cascade="all, delete-orphan"
     )
 
+    token: Mapped[Optional[str]]
+
     def __str__(self) -> str:
-        return f"{self.id} {self.email} {self.user_password} {self.subscription_end_date}"
+        return f"{self.id} {self.email}"
 
     def __repr__(self) -> str:
-        return f"{self.id} {self.email} {self.user_password} {self.subscription_end_date}"
+        return str(self)
 
 
 class RedditAccount(Base):
@@ -50,27 +44,40 @@ class RedditAccount(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    owner: Mapped["User"] = relationship(back_populates="reddit_accounts")
+    subscription: Mapped["Subscription"] = relationship(back_populates="reddit_accounts")
+
+    subscription_id: Mapped[int] = mapped_column(ForeignKey("subscriptions_table.id"))
+
+    ads_id: Mapped[str]
+
+    def __str__(self) -> str:
+        return f"{self.id} {self.ads_id}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
+
+class Subscription(Base):
+    __tablename__ = "subscriptions_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    owner: Mapped["User"] = relationship(back_populates="subscriptions")
 
     owner_id: Mapped[int] = mapped_column(ForeignKey("users_table.id"))
 
-    email: Mapped[Optional[str]]
+    end_date: Mapped[date]
 
-    password: Mapped[Optional[str]]
+    amount_accounts_limit: Mapped[int]
 
-    proxy_host: Mapped[str]
-
-    proxy_port: Mapped[int]
-
-    proxy_user: Mapped[str]
-
-    proxy_password: Mapped[str]
+    reddit_accounts: Mapped[List["RedditAccount"]] = relationship(
+        back_populates="subscription", cascade="all, delete-orphan"
+    )
 
     def __str__(self) -> str:
-        return f"{self.id} {self.email} {self.password} {self.owner.email}"
+        return f"{self.id} {self.owner.email} {self.end_date} {self.amount_accounts_limit}"
 
     def __repr__(self) -> str:
-        return f"{self.id} {self.email} {self.password} {self.owner.email}"
-
+        return str(self)
 
 Base.metadata.create_all(engine)
