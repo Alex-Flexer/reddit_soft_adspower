@@ -31,7 +31,8 @@ BOT_COMMANDS = [
     BotCommand(command="start", description="Start bot"),
     BotCommand(command="help", description="Find out everything you need about us"),
     BotCommand(command="support", description="Contact our support team"),
-    BotCommand(command="login", description="Log in your account to get more functionality"),
+    BotCommand(command="sign_up", description="Log in your account to get more functionality"),
+    BotCommand(command="trial", description="Try a trial period"),
 ]
 
 CANCEL_KEYBOARD_MARKUP =\
@@ -109,21 +110,31 @@ SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP =\
 
 
 class Form(StatesGroup):
-    confirm_password = State()
+    come_up_password = State()
     set_amount_accounts = State()
     check_transaction = State()
     add_account = State()
     delete_account = State()
 
 
+async def check_user_exists(message: Message) -> bool:
+    username = message.from_user.username
+    verdict = db.check_user_exists(username)
+    if not verdict:
+        await message.answer(f"User with username \"{username}\" does not exist.")
+    return verdict
+
+
 @form_router.message(CommandStart())
 async def command_start(message: Message) -> None:
-    res = await message.answer(
+    username = message.from_user.username
+    await message.answer(
         "You are welcomed by reddit-syndicate! Some about as:\n\n"
         "Reddit Syndicate is a powerful automation tool tailored for"
         "users, businesses, and creators who want to promote their Reddit accounts.\n\n"
         "With a single software, handle millions of tasks at once—from content "
-        "scheduling and posting to data gathering and community engagement."
+        "scheduling and posting to data gathering and community engagement.",
+        reply_markup=(MAIN_KEYBOARD_MARKUP if db.check_user_exists(username) else ReplyKeyboardRemove())
     )
 
 
@@ -131,7 +142,7 @@ async def command_start(message: Message) -> None:
 async def command_help(message: Message) -> None:
     await message.answer(
         "How can I help you?\n\n"
-        "If you have an account please use command /login to log in. "
+        "If you have an account please use command /sign_up to create an account. "
         "Then you will get more functionality inside the chatbot.\n\n"
         f"If you have not created your own account yet, you can do it {html.link('here', 'http://90.156.168.186:8000/sign-up')}.\n\n"
         f"Also if you have some software problem or some other questions you can contact to our support team (reddsyndicate@mail.ru)."
@@ -146,33 +157,43 @@ async def command_support(message: Message) -> None:
     )
 
 
-@form_router.message(Command("login"))
-async def command_login(message: Message, state: FSMContext) -> None:
+@form_router.message(Command("sign_up"))
+async def command_sign_up(message: Message, state: FSMContext) -> None:
     username = message.from_user.username
             
-    if not db.check_user_exists(username):
-        await message.answer(
-            f"User with username \"{username}\" does not exist"
-        )
+    if db.check_user_exists(username):
+        await message.answer(f"User with username \"{username}\" already exists.")
     else:
-        await state.set_state(Form.confirm_password)
+        await state.set_state(Form.come_up_password)
         await message.answer(
-            "Please, enter your password:",
+            "Please, come up with a strong password:",
             reply_markup=CANCEL_KEYBOARD_MARKUP
         )
 
 
+@form_router.message(Command("trial"))
+async def command_sign_up(message: Message) -> None:
+    if not await check_user_exists(message):
+        return
+
+    username = message.from_user.username
+    if not db.check_user_used_trial(username):
+        res = db.add_trial_subscription(username)
+        if res:
+            await message.answer(f"Trial period is successfully acrivated! ({html.link('find out more about trial version', '/help')})")
+        else:
+            await message.answer("Failed to activate trial period.")
+    else:
+        await message.answer("Trial period has already been used.")
+
+
 @form_router.message(F.text.casefold() == "get confirmation code")
-async def command_get_confirmation_code(message: Message, state: FSMContext) -> None:
-    is_logged_in = await state.get_value("logged_in")
-    if not is_logged_in:
-        await message.answer(
-            "Please, firstly log in. Use command /login",
-            reply_markup=ReplyKeyboardRemove()
-            )
+async def command_get_confirmation_code(message: Message) -> None:
+    if not await check_user_exists(message):
         return
 
     username: str = message.from_user.username
+
     auth_code = token_hex(16)
     db.update_email_code(username, auth_code)
 
@@ -199,68 +220,45 @@ async def command_cancel(message: Message, state: FSMContext) -> None:
     )
 
 
-@form_router.message(Form.confirm_password)
+@form_router.message(Form.come_up_password)
 async def process_password(message: Message, state: FSMContext) -> None:
-    attempts: int | None = await state.get_value("attempts")
-    if attempts == 0:
-        await message.answer(
-            "You have entered the wrong password too many times, "
-            "please contact our support.",
-            reply_markup=ReplyKeyboardRemove()
-            )
-        return
-
-    password: str = message.text
     username = message.from_user.username
-
-    if attempts is None:
-        attempts = 5
-
-    if not db.check_user_password(username, password):
-        attempts = attempts - 1
-        if attempts > 0:
-            await message.answer(
-                "I'm sory, but that's an incorrect password."
-                f"You have {attempts} attempts left.",
-                reply_markup=CANCEL_KEYBOARD_MARKUP
-                )
-        else:
-            await state.clear()
-            await message.answer(
-                "I'm sory, but that's an incorrect password."
-                "You have spent all your attempts, please contact our support.",
-                reply_markup=ReplyKeyboardRemove()
-            )
-
+    if db.check_user_exists(username):
+        await message.answer(f"User with username {username} already exists.")        
     else:
-        await state.update_data(logged_in=True)
-        await state.set_state(None)
-        await message.answer(
-            "Congratulations! You have successfully logged in.",
-            reply_markup=MAIN_KEYBOARD_MARKUP
-        )
+        password: str = message.text
 
-    await state.update_data(attempts=attempts)
+        if len(password) > 32:
+            await message.answer("Your password too cool for me! Please, make it a little bit shorter. (maximum 32 character)")
+        elif len(password) < 6:
+            await message.answer("Eeven my younger sister has a longer password! Please, make it a little bit longer. (minimum 6 character)")
+        else:
+            verdict = db.add_new_user(username, password)
+            if verdict:
+                db.confirm_email_code(username)
+                await message.answer(
+                    f"Congratulations! You have successfully signed up.",
+                    reply_markup=MAIN_KEYBOARD_MARKUP
+                )
+            else:
+                await message.answer("Something went wrong, contact our support.")
+            await state.set_state(None)
+                
     
 
 @form_router.message(F.text.casefold() == "account info")
-async def process_account_info(message: Message, state: FSMContext) -> None:
-    is_logged_in = await state.get_value("logged_in")
+async def process_account_info(message: Message) -> None:
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
+    username = message.from_user.username
+    if db.check_user_exists(username):
+        await show_account_info(message, username)
+    else:
         await message.answer(
             "You have not logged in yet.",
             reply_markup=ReplyKeyboardRemove()
         )
-    else:
-        username = message.from_user.username
-        if db.check_user_exists(username):
-            await show_account_info(message, username)
-        else:
-            await message.answer(
-                "You have not logged in yet.",
-                reply_markup=ReplyKeyboardRemove()
-            )
 
 
 async def show_account_info(message: Message, email):
@@ -285,94 +283,75 @@ async def show_account_info(message: Message, email):
 
 
 @form_router.message(F.text.casefold() == "subscriptions manager")
-async def process_subscriptions_manager(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_subscriptions_manager(message: Message):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        await message.answer(
-            "What would you like to do?",
-            reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
-        )
+    await message.answer(
+        "What would you like to do?",
+        reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
+    )
 
 @form_router.message(F.text.casefold() == "home")
-async def process_home(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_home(message: Message):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        await message.answer(
-            choice(["Good there where we are not.",
-             "There's no place like home.",
-             "East or west, home is best",
-             "Home sweet home."]),
-            reply_markup=MAIN_KEYBOARD_MARKUP
-        )
+    await message.answer(
+        choice(["Good there where we are not.",
+            "There's no place like home.",
+            "East or west, home is best",
+            "Home sweet home."]),
+        reply_markup=MAIN_KEYBOARD_MARKUP
+    )
 
 
 @form_router.message(F.text.casefold() == "buy a subscription")
 async def process_buy_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        await message.answer(
-            text="Enter the number of accounts you want to buy:",
-            reply_markup=ADDING_ACCOUNT_KEYBOARD_MARKUP
-        )
-        await state.set_state(Form.set_amount_accounts)
+    await message.answer(
+        text="Enter the number of accounts you want to buy:",
+        reply_markup=ADDING_ACCOUNT_KEYBOARD_MARKUP
+    )
+    await state.set_state(Form.set_amount_accounts)
 
 
 @form_router.message(Form.set_amount_accounts)
 async def process_set_amount_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+    def calc_full_price(amount: int) -> int:
+        prefix_prices = [18, 34, 48, 60]
+        if amount <= 10:
+            return amount * 20
+        if amount > 10:
+            return 100 + prefix_prices[min(3, amount - 11)] + max(0, amount - 14) * 12
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        if not message.text.isalnum():
-            await message.answer("The number of accounts must be a natural number!")
-        else:
-            accounts_amount = int(message.text)
-            crypto_token = "TMPYVBkVZj5pboTAW3VqsW29QMNq6F9Bwq"
-            current_price = accounts_amount * 20 + round(random(), 3)
-
-            await message.answer(
-                f"Your current subscription price: {html.code(current_price)}.\n"
-                f"Сrypto token for payment: {html.code(crypto_token)}.",
-                reply_markup=CHECKING_TRANSACTION_KEYBOARD_MARKUP
-            )
-            await state.update_data(accounts_amount=accounts_amount)
-            await state.set_state(Form.check_transaction)
-
-
-@form_router.message(F.text.casefold() == "check transaction", Form.check_transaction)
-async def process_check_transaction(message: Message, state: FSMContext):
-    await state.set_state(None)
-
-    is_logged_in = await state.get_value("logged_in")
-
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
+    if not await check_user_exists(message):
         return
+
+    if not message.text.isalnum():
+        await message.answer("The number of accounts must be a natural number!")
+    else:
+        accounts_amount = int(message.text)
+        crypto_token = "TMPYVBkVZj5pboTAW3VqsW29QMNq6F9Bwq"
+        current_price = calc_full_price(accounts_amount) + round(random(), 3)
+
+        await message.answer(
+            f"Your current subscription price: {html.code(current_price)}.\n"
+            f"Сrypto token for payment: {html.code(crypto_token)}.",
+            reply_markup=CHECKING_TRANSACTION_KEYBOARD_MARKUP
+        )
+        await state.update_data(accounts_amount=accounts_amount)
+        await state.set_state(Form.check_transaction)
+
+
+@form_router.message(Form.check_transaction)
+async def process_check_transaction(message: Message, state: FSMContext):
+    if not await check_user_exists(message):
+        return
+
+    await state.set_state(None)
 
     username: str = message.from_user.username
     active_price = db.get_user_active_subscription_price(username)
@@ -406,136 +385,108 @@ async def process_check_transaction(message: Message, state: FSMContext):
 
 
 @form_router.message(F.text.casefold() == "check my accounts")
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_check_accounts(message: Message):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        username = message.from_user.username
-        accounts = db.get_reddit_accounts(username)
-        answer_text = "Information about all your active accounts:\n"
-        for i, acc in enumerate(accounts, start=1):
-            main_string = f"{i}) {html.code(acc.ads_id)} expires "
+    username = message.from_user.username
+    accounts = db.get_reddit_accounts(username)
 
-            time_delt = (acc.subscription.end_date - date.today()).days
-            main_string += "today" if time_delt == 0 else f"in {time_delt} days"
+    answer_text = "Information about all your active accounts:\n"
+    for i, acc in enumerate(accounts, start=1):
+        main_string = f"{i}) {html.code(acc.ads_id)} expires "
 
-            main_string += (";" if i < len(accounts) else ".") + "\n"
-            answer_text += main_string
+        time_delt = (acc.subscription.end_date - date.today()).days
+        main_string += "today" if time_delt == 0 else f"in {time_delt} days"
 
-        if len(accounts) == 0:
-            answer_text = "You do not have any active accounts."
-        await message.answer(answer_text)
+        main_string += (";" if i < len(accounts) else ".") + "\n"
+        answer_text += main_string
+
+    if len(accounts) == 0:
+        answer_text = "You do not have any active accounts."
+    await message.answer(answer_text)
 
 
 @form_router.message(F.text.casefold() == "check my subscriptions")
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_check_subscriptions(message: Message):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        username = message.from_user.username
-        subscriptions = db.get_subscriptions(username)
-        answer_text = "Information about all your active subscriptions:\n"
-        for i, sub in enumerate(subscriptions, start=1):
-            main_string = f"{i}) subscriptions to {sub.amount_accounts_limit} expires "
+    username = message.from_user.username
+    subscriptions = db.get_subscriptions(username)
 
-            time_delt = (sub.end_date - date.today()).days
-            main_string += "today" if time_delt == 0 else f"in {time_delt} days"
+    answer_text = "Information about all your active subscriptions:\n"
+    for i, sub in enumerate(subscriptions, start=1):
+        main_string = f"{i}) subscriptions to {sub.amount_accounts_limit} expires "
 
-            main_string += (";" if i < len(subscriptions) else ".") + "\n"
-            answer_text += main_string
+        time_delt = (sub.end_date - date.today()).days
+        main_string += "today" if time_delt == 0 else f"in {time_delt} days"
 
-        if len(subscriptions) == 0:
-            answer_text = "You do not have any active subscriptions."
-        await message.answer(answer_text)
+        main_string += (";" if i < len(subscriptions) else ".") + "\n"
+        answer_text += main_string
+
+    if len(subscriptions) == 0:
+        answer_text = "You do not have any active subscriptions."
+    await message.answer(answer_text)
 
 
 @form_router.message(F.text.casefold() == "add account")
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_set_username_new_account(message: Message, state: FSMContext):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        await message.answer(
-            text="Enter your account adspower-ID",
-            reply_markup=ADDING_ACCOUNT_KEYBOARD_MARKUP
-        )
-        await state.set_state(Form.add_account)
+    await message.answer(
+        text="Enter your account adspower-ID",
+        reply_markup=ADDING_ACCOUNT_KEYBOARD_MARKUP
+    )
+    await state.set_state(Form.add_account)
 
 
 @form_router.message(Form.add_account)
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_add_account(message: Message, state: FSMContext):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        username = message.from_user.username
-        ads_id = message.text
-        res = db.add_reddit_account(username, ads_id)
-        await message.answer(
-            "Account was successfully added."
-            if res else "Account was not added.",
-            reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
-        )
-        await state.set_state(None)
+    username = message.from_user.username
+    ads_id = message.text
+    res = db.add_reddit_account(username, ads_id)
+    await message.answer(
+        "Account was successfully added."
+        if res else "Account was not added.",
+        reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
+    )
+    await state.set_state(None)
 
 
 @form_router.message(F.text.casefold() == "delete account")
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_set_username_deletion_account(message: Message, state: FSMContext):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        await message.answer(
-            text="Enter your account adspower-ID",
-            reply_markup=CANCEL_KEYBOARD_MARKUP
-        )
-        await state.set_state(Form.delete_account)
+    await message.answer(
+        text="Enter your account adspower-ID",
+        reply_markup=CANCEL_KEYBOARD_MARKUP
+    )
+    await state.set_state(Form.delete_account)
 
 
 @form_router.message(Form.delete_account)
-async def process_check_accounts(message: Message, state: FSMContext):
-    is_logged_in = await state.get_value("logged_in")
+async def process_delete_account(message: Message, state: FSMContext):
+    if not await check_user_exists(message):
+        return
 
-    if not is_logged_in:
-        await message.answer(
-            "You have not logged in yet.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-    else:
-        ads_id = message.text
-        res = db.delete_reddit_account(ads_id)
-        await message.answer(
-            "Account was successfully deleted."
-            if res else "Failed to delete account.",
-            reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
-        )
-        await state.set_state(None)
+    ads_id = message.text
+    res = db.delete_reddit_account(ads_id)
+    await message.answer(
+        "Account was successfully deleted."
+        if res else "Failed to delete account.",
+        reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
+    )
+    await state.set_state(None)
 
 
 @form_router.message(default_state)
-async def process_unknow_command(message: Message):
+async def process_unknown_command(message: Message):
     await message.answer("Unknow command.")
 
 

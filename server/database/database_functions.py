@@ -18,11 +18,15 @@ def check_user_exists(email: str) -> bool:
 
 
 def check_user_confirmed(email: str) -> bool:
-    return get_user_by_email(email=email).confirmed_status
+    return get_user_by_email(email=email).status_confirmed
 
 
 def check_reddit_account_exists(ads_id: str) -> bool:
     return not (get_reddit_account(ads_id) is None)
+
+
+def check_subscription_exists(subscription_id: int) -> bool:
+    return session.scalar(select(Subscription).where(Subscription.id == subscription_id))
 
 
 def check_user_password(email: str, password: str) -> bool:
@@ -44,6 +48,12 @@ def check_user_credentials(email: str, password: str, token: str) -> bool:
 
     user = get_user_by_email(email)
     return user.token == token and user.user_password == password
+
+
+def check_user_used_trial(email: str) -> bool:
+    if not check_user_exists(email):
+        return False
+    return get_user_by_email(email).status_used_trial
 
 
 def get_user_by_email(email: str) -> User | None:
@@ -95,7 +105,8 @@ def add_new_user(email: str, user_password: str) -> bool:
     session.add(User(
         email=email,
         user_password=user_password,
-        confirmed_status=False)
+        status_confirmed=False,
+        status_used_trial=False)
     )
 
     session.commit()
@@ -111,6 +122,21 @@ def add_subscription(user_email: str, amount: int) -> bool:
         owner_id=user.id,
         end_date=date.today() + timedelta(30),
         amount_accounts_limit=amount
+
+    ))
+    session.commit()
+    return True
+
+
+def add_trial_subscription(user_email: str) -> bool:
+    if not check_user_exists(user_email) or check_user_used_trial(user_email):
+        return False
+
+    user = get_user_by_email(user_email)
+    session.add(Subscription(
+        owner_id=user.id,
+        end_date=date.today() + timedelta(3),
+        amount_accounts_limit=1
 
     ))
     session.commit()
@@ -149,7 +175,7 @@ def confirm_email_code(email: str) -> bool:
         return False
 
     session.query(User).filter_by(email=email).\
-        update({"confirmed_status": True})
+        update({"status_confirmed": True})
 
     session.commit()
     return True
@@ -224,6 +250,11 @@ def show_db(db_name) -> None:
 
 
 if __name__ == "__main__":
-    add_subscription("alexandr_flexer", 3)
+    ...
+    # a = "alexandr_flexer"
+    # b = session.query(User).filter_by(email=a)
+    # print(b.count())
+    # print(check_subscription_exists(90))
+    # add_subscription("alexandr_flexer", 3)
     # show_db(User)
-    show_db(Subscription)
+    # show_db(Subscription)

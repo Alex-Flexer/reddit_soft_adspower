@@ -22,7 +22,9 @@ class User(Base):
 
     authorization_code: Mapped[Optional[str]]
 
-    confirmed_status: Mapped[bool]
+    status_confirmed: Mapped[bool]
+
+    status_used_trial: Mapped[bool]
 
     active_subscription_price: Mapped[Optional[int]]
 

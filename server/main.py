@@ -23,9 +23,9 @@ async def send_home_page() -> FileResponse:
     return FileResponse("../server/static/html/index.html")
 
 
-@app.get("/sign-up/")
-async def send_registration_page() -> FileResponse:
-    return FileResponse("../server/static/html/sign_up.html")
+# @app.get("/sign-up/")
+# async def send_registration_page() -> FileResponse:
+#     return FileResponse("../server/static/html/sign_up.html")
 
 
 @app.get("/confirm-code/")
@@ -33,9 +33,9 @@ async def check_email_code() -> FileResponse:
     return FileResponse("../server/static/html/check_email_code.html")
 
 
-@app.get("/login/")
-async def send_login_page() -> FileResponse:
-    return FileResponse("../server/static/html/login.html")
+# @app.get("/login/")
+# async def send_login_page() -> FileResponse:
+#     return FileResponse("../server/static/html/login.html")
 
 
 @app.get("/tariffs/")
@@ -103,65 +103,56 @@ async def get_reddit_accounts(request: Request) -> JSONResponse:
     json: dict = await request.json()
     response_json: dict = {"result": False, "message": "Incorrect request"}
 
-    print("email" in json)
-
     if {"email"}.issubset(json.keys()):
         email = json['email']
         if db.check_user_exists(email):
             reddit_accounts = db.get_reddit_accounts(email)
             response_json['result'] = True
             response_json["message"] = ""
-            response_json["accounts"] = [
-                {
-                    "email": acc.email,
-                    "password": acc.password
-                }
-                for acc in reddit_accounts
-            ]
+            response_json["accounts"] = [acc.ads_id for acc in reddit_accounts]
         else:
             response_json["message"] = "User with this tg-nickname does not exist"
-    print(response_json)
     return JSONResponse(content=response_json, status_code=200)
 
 
-@app.post("/get/proxy/")
-async def get_proxy(request: Request) -> JSONResponse:
-    json: dict = await request.json()
-    response_json: dict = {"result": False, "message": "Incorrect request"}
+# @app.post("/get/proxy/")
+# async def get_proxy(request: Request) -> JSONResponse:
+#     json: dict = await request.json()
+#     response_json: dict = {"result": False, "message": "Incorrect request"}
 
-    if {"email"}.issubset(json.keys()):
-        email = json['email']
-        if db.check_reddit_account_exists(email=email):
-            proxy_info = db.get_proxy(email)
-            response_json["proxy"] = proxy_info
-            response_json["massage"] = ""
-            response_json['result'] = True
-        else:
-            response_json['massage'] =\
-                'Reddit account with this email does not exist'
-    return JSONResponse(content=response_json, status_code=200)
+#     if {"email"}.issubset(json.keys()):
+#         email = json['email']
+#         if db.check_reddit_account_exists(email=email):
+#             proxy_info = db.get_proxy(email)
+#             response_json["proxy"] = proxy_info
+#             response_json["massage"] = ""
+#             response_json['result'] = True
+#         else:
+#             response_json['massage'] =\
+#                 'Reddit account with this email does not exist'
+#     return JSONResponse(content=response_json, status_code=200)
 
 
-@app.post("/get/price/")
-async def send_price(request: Request) -> JSONResponse:
-    json: dict = await request.json()
-    response_json: dict = {"result": False, "message": "Incorrect request"}
+# @app.post("/get/price/")
+# async def send_price(request: Request) -> JSONResponse:
+#     json: dict = await request.json()
+#     response_json: dict = {"result": False, "message": "Incorrect request"}
 
-    if {"email"}.issubset(json.keys()):
-        email = json["email"]
-        price =\
-        299 if db.get_user_by_email(email).subscription_end_date is None\
-        else 349
+#     if {"email"}.issubset(json.keys()):
+#         email = json["email"]
+#         price =\
+#         299 if db.get_user_by_email(email).subscription_end_date is None\
+#         else 349
 
-        new_price = price + round(random(), 3)
+#         new_price = price + round(random(), 3)
 
-        db.update_subscription_price(email, new_price)
+#         db.update_subscription_price(email, new_price)
 
-        response_json["result"] = True
-        response_json["price"] = new_price
-        response_json["message"] = ""
+#         response_json["result"] = True
+#         response_json["price"] = new_price
+#         response_json["message"] = ""
 
-    return JSONResponse(content=response_json, status_code=200)
+#     return JSONResponse(content=response_json, status_code=200)
 
 
 @app.get("/get/crypto-token/")
@@ -179,80 +170,80 @@ async def send_crypto_token() -> JSONResponse:
     return JSONResponse(content=response_json, status_code=200)
 
 
-@app.post("/sign-up/user/")
-async def add_user(request: Request) -> JSONResponse:
-    json = await request.json()
+# @app.post("/sign-up/user/")
+# async def add_user(request: Request) -> JSONResponse:
+#     json = await request.json()
 
-    response_json = {"result": False, "message": "Incorrect request"}
+#     response_json = {"result": False, "message": "Incorrect request"}
 
-    if {"email", "password"}.issubset(json.keys()):
-        email = json["email"]
-        password = json["password"]
+#     if {"email", "password"}.issubset(json.keys()):
+#         email = json["email"]
+#         password = json["password"]
 
-        if db.check_user_exists(email):
-            response_json["message"] = "User already exists"
-        else:
-            result = db.add_new_user(email, password)
-            if result:
-                response_json["message"] = ""
-                response_json["result"] = True
-            else:
-                response_json["message"] = "Unknown sing up error"
+#         if db.check_user_exists(email):
+#             response_json["message"] = "User already exists"
+#         else:
+#             result = db.add_new_user(email, password)
+#             if result:
+#                 response_json["message"] = ""
+#                 response_json["result"] = True
+#             else:
+#                 response_json["message"] = "Unknown sing up error"
 
-    return JSONResponse(content=response_json, status_code=200)
-
-
-@app.post("/login/user/")
-async def login_user(request: Request) -> JSONResponse:
-    json = await request.json()
-
-    response_json = {"result": False, "message": "Incorrect request"}
-
-    if {"email", "password"}.issubset(json.keys()):
-        email = json["email"]
-        password = json["password"]
-
-        if not db.check_user_exists(email):
-            response_json["message"] = "User with this tg-nickname does not exist"
-        elif not db.check_user_password(email, password):
-            response_json["message"] = "Incorrect password"
-        elif not db.check_user_confirmed(email):
-            response_json["result"] = True
-            response_json["message"] = "Registration email code not confirmed"
-        else:
-            response_json["result"] = True
-            response_json["message"] = ""
-
-    return JSONResponse(content=response_json, status_code=200)
+#     return JSONResponse(content=response_json, status_code=200)
 
 
-@app.post("/confirm/email-code")
-async def check_user_code(request: Request) -> JSONResponse:
-    json = await request.json()
+# @app.post("/login/user/")
+# async def login_user(request: Request) -> JSONResponse:
+#     json = await request.json()
 
-    response_json = {
-        "result": False,
-        "message": "Incorrect request"
-    }
+#     response_json = {"result": False, "message": "Incorrect request"}
 
-    if {"email", "code"}.issubset(json.keys()):
-        email = json["email"]
-        code = json["code"]
+#     if {"email", "password"}.issubset(json.keys()):
+#         email = json["email"]
+#         password = json["password"]
 
-        if not db.check_user_exists(email):
-            response_json["message"] = "User with this tg-nickname does not exist"
-        elif not db.check_authorization_code(email, code):
-            response_json["message"] = "Incorrect authorization code"
-        else:
-            db.confirm_email_code(email)
+#         if not db.check_user_exists(email):
+#             response_json["message"] = "User with this tg-nickname does not exist"
+#         elif not db.check_user_password(email, password):
+#             response_json["message"] = "Incorrect password"
+#         elif not db.check_user_confirmed(email):
+#             response_json["result"] = True
+#             response_json["message"] = "Registration email code not confirmed"
+#         else:
+#             response_json["result"] = True
+#             response_json["message"] = ""
 
-            auth_code = token_hex(16)
-            db.update_email_code(email, auth_code)
+#     return JSONResponse(content=response_json, status_code=200)
 
-            response_json["message"] = ""
-            response_json["result"] = True
 
-    return JSONResponse(content=response_json, status_code=200)
+# @app.post("/confirm/email-code")
+# async def check_user_code(request: Request) -> JSONResponse:
+#     json = await request.json()
+
+#     response_json = {
+#         "result": False,
+#         "message": "Incorrect request"
+#     }
+
+#     if {"email", "code"}.issubset(json.keys()):
+#         email = json["email"]
+#         code = json["code"]
+
+#         if not db.check_user_exists(email):
+#             response_json["message"] = "User with this tg-nickname does not exist"
+#         elif not db.check_authorization_code(email, code):
+#             response_json["message"] = "Incorrect authorization code"
+#         else:
+#             db.confirm_email_code(email)
+
+#             auth_code = token_hex(16)
+#             db.update_email_code(email, auth_code)
+
+#             response_json["message"] = ""
+#             response_json["result"] = True
+
+#     return JSONResponse(content=response_json, status_code=200)
 
 
 @app.post("/update/user-token/")
@@ -276,32 +267,32 @@ async def send_email_code(request: Request) -> JSONResponse:
     return JSONResponse(content=response_json, status_code=200)
 
 
-@app.post("/check/transaction/")
-async def check_user_transaction(request: Request) -> JSONResponse:
-    json: dict = await request.json()
-    response_json = {"result": False, "message": "Incorrect request"}
+# @app.post("/check/transaction/")
+# async def check_user_transaction(request: Request) -> JSONResponse:
+#     json: dict = await request.json()
+#     response_json = {"result": False, "message": "Incorrect request"}
 
-    if {"email"}.issubset(json.keys()):
-        email = json["email"]
+#     if {"email"}.issubset(json.keys()):
+#         email = json["email"]
 
-        if db.check_user_exists(email):
-            try:
-                price = db.get_user_active_subscription_price(email)
-                transaction_verdict = await check_transaction(price)
-            except Exception as e:
-                response_json["message"] = "Unknown checking transaction Error"
-                print(e)
-            else:
-                if transaction_verdict:
-                    db.renew_subscription(email)
-                    response_json["result"] = True
-                    response_json["message"] = ""
-                else:
-                    response_json["message"] = "Transaction was not found"
-        else:
-            response_json["message"] = "Users with this email does not exists"
+#         if db.check_user_exists(email):
+#             try:
+#                 price = db.get_user_active_subscription_price(email)
+#                 transaction_verdict = await check_transaction(price)
+#             except Exception as e:
+#                 response_json["message"] = "Unknown checking transaction Error"
+#                 print(e)
+#             else:
+#                 if transaction_verdict:
+#                     db.renew_subscription(email)
+#                     response_json["result"] = True
+#                     response_json["message"] = ""
+#                 else:
+#                     response_json["message"] = "Transaction was not found"
+#         else:
+#             response_json["message"] = "Users with this email does not exists"
 
-    return JSONResponse(content=response_json, status_code=200)
+#     return JSONResponse(content=response_json, status_code=200)
 
 
 @app.post("/check/user-credentials/")
@@ -317,8 +308,6 @@ async def check_user_credentials(request: Request) -> JSONResponse:
         if db.check_user_exists(email):
             if not db.check_user_credentials(email, password, token):
                 response_json["message"] = "Incorrect credentials"
-            elif not db.check_user_subscription(email):
-                response_json["message"] = "Subscription expired or was not completed"
             else:
                 response_json["result"] = True
                 response_json["message"] = ""
@@ -336,24 +325,23 @@ async def add_reddit_account(request: Request) -> JSONResponse:
 
     params_reqirements: set[str] = {
         "user_email",
-        "reddit_email",
-        "reddit_password",
-        "host",
-        "port",
-        "user",
-        "password"
+        "ads_id"
     }
 
     if params_reqirements.issubset(json.keys()):
         if not db.check_user_exists(json["user_email"]):
             response_json["massage"] = "Users with this email does not exists"
-        elif db.check_reddit_account_exists(json["reddit_email"]):
+        elif db.check_reddit_account_exists(json["ads_id"]):
             response_json['massage'] =\
-                'Reddit account with this email does not exist'
+                'Reddit account with this adspower-id does not exist'
         else:
-            db.add_subscription(**json)
-            response_json['result'] = True
-            response_json["massage"] = ""
+            verdict = db.add_reddit_account(**json)
+            response_json['result'] = verdict
+            if verdict:
+                response_json["massage"] = ""
+            else:
+                response_json["massage"] = "Faild to add new account."
+
 
     return JSONResponse(content=response_json, status_code=200)
 
