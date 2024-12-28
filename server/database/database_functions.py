@@ -139,6 +139,7 @@ def add_trial_subscription(user_email: str) -> bool:
         amount_accounts_limit=1
 
     ))
+    session.query(User).filter_by(email=user_email).update({"status_used_trial": True})
     session.commit()
     return True
 
@@ -164,7 +165,6 @@ def add_reddit_account(user_email: str, ads_id: str) -> bool:
 
     if new_reddit_account is None:
         return False
-
     session.add(new_reddit_account)
     session.commit()
     return True

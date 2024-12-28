@@ -193,28 +193,25 @@ async def send_crypto_token() -> JSONResponse:
 #     return JSONResponse(content=response_json, status_code=200)
 
 
-# @app.post("/login/user/")
-# async def login_user(request: Request) -> JSONResponse:
-#     json = await request.json()
+@app.post("/login/user/")
+async def login_user(request: Request) -> JSONResponse:
+    json = await request.json()
 
-#     response_json = {"result": False, "message": "Incorrect request"}
+    response_json = {"result": False, "message": "Incorrect request"}
 
-#     if {"email", "password"}.issubset(json.keys()):
-#         email = json["email"]
-#         password = json["password"]
+    if {"email", "password"}.issubset(json.keys()):
+        email = json["email"]
+        password = json["password"]
 
-#         if not db.check_user_exists(email):
-#             response_json["message"] = "User with this tg-nickname does not exist"
-#         elif not db.check_user_password(email, password):
-#             response_json["message"] = "Incorrect password"
-#         elif not db.check_user_confirmed(email):
-#             response_json["result"] = True
-#             response_json["message"] = "Registration email code not confirmed"
-#         else:
-#             response_json["result"] = True
-#             response_json["message"] = ""
+        if not db.check_user_exists(email):
+            response_json["message"] = "User with this tg-nickname does not exist"
+        elif not db.check_user_password(email, password):
+            response_json["message"] = "Incorrect password"
+        else:
+            response_json["result"] = True
+            response_json["message"] = ""
 
-#     return JSONResponse(content=response_json, status_code=200)
+    return JSONResponse(content=response_json, status_code=200)
 
 
 # @app.post("/confirm/email-code")

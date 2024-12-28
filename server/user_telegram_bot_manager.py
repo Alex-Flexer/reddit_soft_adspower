@@ -417,7 +417,7 @@ async def process_check_subscriptions(message: Message):
 
     answer_text = "Information about all your active subscriptions:\n"
     for i, sub in enumerate(subscriptions, start=1):
-        main_string = f"{i}) subscriptions to {sub.amount_accounts_limit} expires "
+        main_string = f"{i}) subscription to {sub.amount_accounts_limit} account expires "
 
         time_delt = (sub.end_date - date.today()).days
         main_string += "today" if time_delt == 0 else f"in {time_delt} days"
