@@ -113,14 +113,14 @@ def add_new_user(email: str, user_password: str) -> bool:
     return True
 
 
-def add_subscription(user_email: str, amount: int) -> bool:
+def add_subscription(user_email: str, amount: int, period: int = 30) -> bool:
     if not check_user_exists(user_email):
         return False
 
     user = get_user_by_email(user_email)
     session.add(Subscription(
         owner_id=user.id,
-        end_date=date.today() + timedelta(30),
+        end_date=date.today() + timedelta(period),
         amount_accounts_limit=amount
 
     ))
@@ -132,14 +132,9 @@ def add_trial_subscription(user_email: str) -> bool:
     if not check_user_exists(user_email) or check_user_used_trial(user_email):
         return False
 
-    user = get_user_by_email(user_email)
-    session.add(Subscription(
-        owner_id=user.id,
-        end_date=date.today() + timedelta(3),
-        amount_accounts_limit=1
-
-    ))
+    add_subscription(user_email, 1, 3)
     session.query(User).filter_by(email=user_email).update({"status_used_trial": True})
+
     session.commit()
     return True
 
@@ -251,10 +246,3 @@ def show_db(db_name) -> None:
 
 if __name__ == "__main__":
     ...
-    # a = "alexandr_flexer"
-    # b = session.query(User).filter_by(email=a)
-    # print(b.count())
-    # print(check_subscription_exists(90))
-    # add_subscription("alexandr_flexer", 3)
-    # show_db(User)
-    # show_db(Subscription)

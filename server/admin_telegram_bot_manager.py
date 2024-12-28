@@ -36,6 +36,7 @@ BOT_COMMANDS = [
 class Form(StatesGroup):
     set_username_add_subscription = State()
     set_amount_accounts = State()
+    set_period_subscription = State()
 
     set_username_delete_subscription = State()
     set_subscription_id = State()
@@ -148,10 +149,29 @@ async def process_set_amount_accounts(message: Message, state: FSMContext):
     if not message.text.isalnum():
         await message.answer("The number of accounts must be a natural number!")
     else:
-        username = await state.get_value("username")
         accounts_amount = int(message.text)
-        db.add_subscription(username, accounts_amount)
-        await message.answer("The subscription has been successfully completed!")
+        await state.update_data(amount=accounts_amount)
+        await message.answer("Enter the subscription period (days):")
+        await state.set_state(Form.set_period_subscription)
+    
+
+@form_router.message(Form.set_period_subscription)
+async def process_set_amount_accounts(message: Message, state: FSMContext):
+    if not await state.get_value("access"):
+        return
+
+    if not message.text.isalnum():
+        await message.answer("The number of days must be a natural number!")
+    else:
+        username = await state.get_value("username")
+        accounts_amount = await state.get_value("amount")
+        period = int(message.text)
+
+        verdict = db.add_subscription(username, accounts_amount, period)
+        if not verdict:
+            await message.answer("Subscriptions was not completed.")
+        else:
+            await message.answer("The subscription has been successfully completed!")
         await state.set_state(None)
 
 
