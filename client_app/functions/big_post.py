@@ -33,8 +33,11 @@ from sys import path
 
 path.insert(1, "functions")
 
-
 from ads_driver import ads_driver
+from db_funcs import get_reddit_accounts
+
+user_email = None
+reddit_account_ads_id = None
 
 WebDriver = ChromeWebdriver | FirefoxWebdriver
 
@@ -50,6 +53,46 @@ PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
 PATTERN_FLAIR_SPANS =\
     "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
 PATTERN_SELECT_TYPE = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/r-post-type-select"
+
+
+def choose_email_window(update_status_callback):
+    """Open a window for choosing an account."""
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        return
+    accounts, msg = get_reddit_accounts(user_email)
+
+    if accounts is None:
+        messagebox.showerror("Error", msg)
+        return
+
+    def select_ads_id(ads_id):
+        global reddit_account_ads_id
+        reddit_account_ads_id = ads_id
+
+        messagebox.showinfo("Info", f"Selected Adspower-ID: {reddit_account_ads_id}")
+        update_status_callback()
+        email_window.destroy()
+
+    email_window = tk.Tk()
+    email_window.title("Choose Adspower-ID")
+    tk.Label(
+        email_window,
+        text="Choose an Adspower-ID:",
+        font=("Modern No. 20", 14)
+    ).pack(pady=10)
+
+    for account in accounts:
+        tk.Button(
+            email_window,
+            text=account['email'],
+            font=("Modern No. 20", 12),
+            command=lambda a=account: select_ads_id(a)
+        ).pack(pady=5)
+
+    email_window.mainloop()
 
 
 def copy_image_to_clipboard(image_path: str):
@@ -298,8 +341,16 @@ def big_post(
 
 
 def tkinter_reddit_big_post():
-
     root = tk.Tk()
+
+    def update_status():
+        if reddit_account_ads_id:
+            entry_ads_id.config(
+                text=f"Selected Account: {reddit_account_ads_id}",
+                fg="green"
+            )
+        else:
+            entry_ads_id.config(text="No account selected", fg="red")
 
     def select_folder():
         folder_selected = filedialog.askdirectory()
@@ -333,7 +384,7 @@ def tkinter_reddit_big_post():
             messagebox.showerror("Error", "Invalid folder path!")
             return
 
-        ads_id1 = ads_id.get()
+        ads_id1 = entry_ads_id.get()
         driver = ads_driver(ads_id1)
         mouse = ActionChains(driver)
         logger: LogWindow = LogWindow()
@@ -365,12 +416,26 @@ def tkinter_reddit_big_post():
 
     tk.Label(
         root,
-        text="Enter Ads Power ID:",
+        text="Select Account:",
         font=("Modern No. 20", 18)
     ).grid(row=0, column=0, padx=10, pady=10)
 
-    ads_id = tk.Entry(root, width=30)
-    ads_id.grid(row=0, column=1, padx=10, pady=10)
+    tk.Button(
+        root,
+        text="Choose Account",
+        font=("Modern No. 20", 18),
+        command=lambda: choose_email_window(update_status)
+    ).grid(row=0, column=1, padx=10, pady=10)
+
+    entry_ads_id =\
+        tk.Label(
+            root,
+            text="No account selected",
+            font=("Modern No. 20", 18),
+            fg="red"
+        )
+
+    entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
 
 
     tk.Label(

@@ -1,2 +1,0 @@
-from tkinter_app.main_app import start_registration
-from tkinter_app.main_func_app import create_window

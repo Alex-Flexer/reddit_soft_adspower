@@ -214,33 +214,33 @@ async def login_user(request: Request) -> JSONResponse:
     return JSONResponse(content=response_json, status_code=200)
 
 
-# @app.post("/confirm/email-code")
-# async def check_user_code(request: Request) -> JSONResponse:
-#     json = await request.json()
+@app.post("/confirm/email-code")
+async def check_user_code(request: Request) -> JSONResponse:
+    json = await request.json()
 
-#     response_json = {
-#         "result": False,
-#         "message": "Incorrect request"
-#     }
+    response_json = {
+        "result": False,
+        "message": "Incorrect request"
+    }
 
-#     if {"email", "code"}.issubset(json.keys()):
-#         email = json["email"]
-#         code = json["code"]
+    if {"email", "code"}.issubset(json.keys()):
+        email = json["email"]
+        code = json["code"]
 
-#         if not db.check_user_exists(email):
-#             response_json["message"] = "User with this tg-nickname does not exist"
-#         elif not db.check_authorization_code(email, code):
-#             response_json["message"] = "Incorrect authorization code"
-#         else:
-#             db.confirm_email_code(email)
+        if not db.check_user_exists(email):
+            response_json["message"] = "User with this tg-nickname does not exist"
+        elif not db.check_authorization_code(email, code):
+            response_json["message"] = "Incorrect authorization code"
+        else:
+            db.confirm_email_code(email)
 
-#             auth_code = token_hex(16)
-#             db.update_email_code(email, auth_code)
+            auth_code = token_hex(16)
+            db.update_email_code(email, auth_code)
 
-#             response_json["message"] = ""
-#             response_json["result"] = True
+            response_json["message"] = ""
+            response_json["result"] = True
 
-#     return JSONResponse(content=response_json, status_code=200)
+    return JSONResponse(content=response_json, status_code=200)
 
 
 @app.post("/update/user-token/")
