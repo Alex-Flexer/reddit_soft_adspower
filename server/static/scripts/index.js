@@ -12,7 +12,7 @@ window.onload = () => {
         document.body.addEventListener('touchstart', function() {}, false);
     }
 
-    typeWriter(".logo", "Reddit Syndicate", 0, 100)
+    typeWriter(".logo", "Karma Master", 0, 100)
     setTimeout(typeWriter, 2000, ".header > h1", "Millions of Tasks — One Software", 0, 100)
     setTimeout(typeWriter, 5700, "p", "Effortlessly Automate Your Reddit Workflow", 0, 50)
 }

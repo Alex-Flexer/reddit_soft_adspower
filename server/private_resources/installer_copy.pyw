@@ -121,7 +121,7 @@ def file_selection_window(username: str, password: str):
             return
 
         try:
-            folder_path = join(folder_path, "RedditSyndicate")
+            folder_path = join(folder_path, "KarmaMaster")
             mkdir(folder_path)
             extract_zip(zip_path, folder_path)
             messagebox.showinfo(
