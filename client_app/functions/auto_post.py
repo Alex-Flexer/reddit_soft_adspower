@@ -355,7 +355,7 @@ def choose_email_window(update_status_callback):
     for account in accounts:
         tk.Button(
             email_window,
-            text=account['email'],
+            text=account,
             font=("Modern No. 20", 12),
             command=lambda a=account: select_ads_id(a)
         ).pack(pady=5)
