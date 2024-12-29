@@ -25,13 +25,13 @@ import database.database_functions as db
 
 form_router = Router()
 
-TOKEN = "8078572509:AAHT8WKFdUmViX_LC9_qRRebtsVpPxtkPN4"
+TOKEN = "7869269231:AAHTo6xfN8Dj-AKbJ3VkXvEJKURHk2hOuHI"
 
 BOT_COMMANDS = [
     BotCommand(command="start", description="Start bot"),
     BotCommand(command="help", description="Find out everything you need about us"),
     BotCommand(command="support", description="Contact our support team"),
-    BotCommand(command="sign_up", description="Log in your account to get more functionality"),
+    BotCommand(command="sign_up", description="Create an account your account to get more functionality"),
     BotCommand(command="trial", description="Try a trial period"),
 ]
 
@@ -129,8 +129,8 @@ async def check_user_exists(message: Message) -> bool:
 async def command_start(message: Message) -> None:
     username = message.from_user.username
     await message.answer(
-        "You are welcomed by reddit-syndicate! Some about as:\n\n"
-        "Reddit Syndicate is a powerful automation tool tailored for"
+        "You are welcomed by Karma-Master! Some about as:\n\n"
+        "Karma Master is a powerful automation tool tailored for"
         "users, businesses, and creators who want to promote their Reddit accounts.\n\n"
         "With a single software, handle millions of tasks at once—from content "
         "scheduling and posting to data gathering and community engagement.",
@@ -142,10 +142,12 @@ async def command_start(message: Message) -> None:
 async def command_help(message: Message) -> None:
     await message.answer(
         "How can I help you?\n\n"
-        "If you have an account please use command /sign_up to create an account. "
+        "If you don't have an account please use command /sign_up to create it. "
         "Then you will get more functionality inside the chatbot.\n\n"
-        f"If you have not created your own account yet, you can do it {html.link('here', 'http://90.156.168.186:8000/sign-up')}.\n\n"
-        f"Also if you have some software problem or some other questions you can contact to our support team (reddsyndicate@mail.ru)."
+        "When subscribing, you purchase slots for accounts, after which you can add accounts to these slots and remove them as needed.\n\n"
+        "During the trial period, you are provided with one account slot for 3 days (to try a trial period use command /trial)\n\n"
+        f"Source links:  {html.link('Installer', "http://reddsyndicate.com/get/installer")}   {html.link("Instruction", "http://reddsyndicate.com/get/instruction")}\n\n"
+        f"Also if you have some software problem or some other questions you can contact to our support team."
     )
 
 

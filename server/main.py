@@ -59,7 +59,7 @@ async def send_installer() -> FileResponse:
 
     return FileResponse(
         "../server/private_resources/installer.pyw",
-        filename="RS-installer.pyw", headers=headers)
+        filename="KM-installer.pyw", headers=headers)
 
 
 @app.get("/get/instruction")
@@ -68,7 +68,7 @@ async def send_instruction() -> FileResponse:
 
     return FileResponse(
         "../server/private_resources/instruction.pdf",
-        filename="RS-instruction.pdf", headers=headers)
+        filename="KM-instruction.pdf", headers=headers)
 
 
 @app.post("/get/software")
@@ -91,7 +91,7 @@ async def send_software(request: Request) -> FileResponse:
 
     if status_code == 200:
         return FileResponse("./private_resources/source.zip",
-                            filename="RedditSyndicate.zip",
+                            filename="KarmaMaster.zip",
                             status_code=200, headers=headers)
     else:
         return FileResponse("./private_resources/empty.txt",

@@ -19,7 +19,7 @@ import database.database_functions as db
 
 form_router = Router()
 
-TOKEN = "7671610516:AAHqRU8dNzaVQdu3QKxs3DCrEny0hwbKNRM"
+TOKEN = "7639329112:AAGf0CHx9H8E1th-PY0c2KtGqvlChqu1jpk"
 
 BOT_COMMANDS = [
     BotCommand(command="start", description="Start bot"),
