@@ -76,15 +76,6 @@ ADDING_ACCOUNT_KEYBOARD_MARKUP =\
         resize_keyboard=True,
     )
 
-ADDING_ACCOUNT_KEYBOARD_MARKUP =\
-    ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(text="Cancel"),
-            ]
-        ],
-        resize_keyboard=True,
-    )
 
 SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP =\
     ReplyKeyboardMarkup(
@@ -130,9 +121,9 @@ async def command_start(message: Message) -> None:
     username = message.from_user.username
     await message.answer(
         "You are welcomed by Karma-Master! Some about as:\n\n"
-        "Karma Master is a powerful automation tool tailored for"
+        "Karma Master is a powerful automation tool tailored for "
         "users, businesses, and creators who want to promote their Reddit accounts.\n\n"
-        "With a single software, handle millions of tasks at once—from content "
+        "With a single software you can handle millions of tasks at once — from content "
         "scheduling and posting to data gathering and community engagement.",
         reply_markup=(MAIN_KEYBOARD_MARKUP if db.check_user_exists(username) else ReplyKeyboardRemove())
     )
@@ -146,16 +137,16 @@ async def command_help(message: Message) -> None:
         "Then you will get more functionality inside the chatbot.\n\n"
         "When subscribing, you purchase slots for accounts, after which you can add accounts to these slots and remove them as needed.\n\n"
         "During the trial period, you are provided with one account slot for 3 days (to try a trial period use command /trial)\n\n"
-        f"Source links:  {html.link('Installer', "http://reddsyndicate.com/get/installer")}   {html.link("Instruction", "http://reddsyndicate.com/get/instruction")}\n\n"
-        f"Also if you have some software problem or some other questions you can contact to our support team."
+        f"Source links:  {html.link('Installer', 'http://reddsyndicate.com/get/installer')}   {html.link('Instruction', 'http://reddsyndicate.com/get/instruction')}\n\n"
+        f"Also if you have some software problem or some other questions you can contact our support team."
     )
 
 
 @form_router.message(Command("support"))
 async def command_support(message: Message) -> None:
     await message.answer(
-        "Contact to our support team (reddsyndicate@mail.ru) "
-        "if you have some software problem or some other questions."
+        "Contact our support team (reddsyndicate@mail.ru) "
+        "if you have any software problems or any other questions."
     )
 
 
@@ -233,7 +224,7 @@ async def process_password(message: Message, state: FSMContext) -> None:
         if len(password) > 32:
             await message.answer("Your password too cool for me! Please, make it a little bit shorter. (maximum 32 character)")
         elif len(password) < 6:
-            await message.answer("Eeven my younger sister has a longer password! Please, make it a little bit longer. (minimum 6 character)")
+            await message.answer("Even my younger sister has a longer password! Please, make it a little bit longer. (minimum 6 character)")
         else:
             verdict = db.add_new_user(username, password)
             if verdict:
@@ -340,7 +331,7 @@ async def process_set_amount_accounts(message: Message, state: FSMContext):
         current_price = calc_full_price(accounts_amount) + round(random(), 3)
 
         await message.answer(
-            f"Your current subscription price: {html.code(current_price)}.\n"
+            f"Your current subscription price: {html.code(current_price)} USDT.\n"
             f"Сrypto token for payment: {html.code(crypto_token)}.",
             reply_markup=CHECKING_TRANSACTION_KEYBOARD_MARKUP
         )
@@ -386,7 +377,7 @@ async def process_check_transaction(message: Message, state: FSMContext):
         )
 
 
-@form_router.message(F.text.casefold() == "check my accounts")
+@form_router.message(F.text.casefold() == "Check my accounts")
 async def process_check_accounts(message: Message):
     if not await check_user_exists(message):
         return
@@ -409,7 +400,7 @@ async def process_check_accounts(message: Message):
     await message.answer(answer_text)
 
 
-@form_router.message(F.text.casefold() == "check my subscriptions")
+@form_router.message(F.text.casefold() == "Check my subscriptions")
 async def process_check_subscriptions(message: Message):
     if not await check_user_exists(message):
         return
@@ -432,7 +423,7 @@ async def process_check_subscriptions(message: Message):
     await message.answer(answer_text)
 
 
-@form_router.message(F.text.casefold() == "add account")
+@form_router.message(F.text.casefold() == "Add account")
 async def process_set_username_new_account(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return
@@ -460,7 +451,7 @@ async def process_add_account(message: Message, state: FSMContext):
     await state.set_state(None)
 
 
-@form_router.message(F.text.casefold() == "delete account")
+@form_router.message(F.text.casefold() == "Delete account")
 async def process_set_username_deletion_account(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return

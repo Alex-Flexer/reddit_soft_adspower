@@ -15,10 +15,10 @@ def ads_driver(ads_id) -> Chrome:
         print(resp["msg"])
         print("please check ads_id")
         sys.exit()
-
-    chrome_driver = resp["data"]["webdriver"]
-    chrome_options = Options()
-    chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
-    driver = webdriver.Chrome(chrome_driver, options=chrome_options)
+    else:
+        chrome_driver = resp["data"]["webdriver"]
+        chrome_options = Options()
+        chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
+        driver = webdriver.Chrome(options=chrome_options)
 
     return driver

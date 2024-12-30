@@ -407,7 +407,7 @@ def tkinter_reddit_auto_post():
             messagebox.showerror("Error", "Invalid folder path!")
             return
 
-        ads_id = entry_ads_id.get()
+        ads_id = reddit_account_ads_id
         driver = ads_driver(ads_id)
         mouse = ActionChains(driver)
         logger: LogWindow = LogWindow()

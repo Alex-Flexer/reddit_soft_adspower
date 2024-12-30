@@ -16,7 +16,7 @@ from auto_post import tkinter_reddit_auto_post
 
 def create_window():
     root = tk.Tk()
-    root.title("Reddit Soft")
+    root.title("Master Karma")
 
     root.geometry("400x400")
 
