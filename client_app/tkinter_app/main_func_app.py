@@ -12,6 +12,8 @@ from acc_title_parse import tkinter_parse_acc_titles
 from acc_subs_parse import tkinter_parse_acc_subs
 from username_parse import tkinter_parse_username
 from auto_post import tkinter_reddit_auto_post
+from big_post_auto_titile import tkinter_reddit_big_post_auto_title
+from auto_post_auto_titile import tkinter_reddit_auto_post_auto_title
 
 
 def create_window():
@@ -63,10 +65,12 @@ def create_window():
         ("Parse Subs From User Account", tkinter_parse_acc_subs),
         ("Parse Titles From Subreddit", tkinter_parse_titles),
         ("Parse Usernames From Subreddit", tkinter_parse_username),
-        ("Prepareation for post", tkinter_reddit_big_post),
-        ("Full post", tkinter_reddit_auto_post),
+        ("Prepareation for post with parsed titles", tkinter_reddit_big_post_auto_title),
+        ("Prepareation for post with your titles", tkinter_reddit_big_post),
+        ("Full post with your titles", tkinter_reddit_auto_post),
+        ("Full post with parsed titles", tkinter_reddit_auto_post_auto_title),
         ("Uniqueize photo or video", uniq_tkinter),
-        ("Converters", tkinter_converters),
+        ("Converters", tkinter_converters)
     ]
 
     def start_process(func):

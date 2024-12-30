@@ -72,7 +72,6 @@ def choose_email_window(update_status_callback):
         global reddit_account_ads_id
         reddit_account_ads_id = ads_id
 
-        messagebox.showinfo("Info", f"Selected Adspower-ID: {reddit_account_ads_id}")
         update_status_callback()
         email_window.destroy()
 
@@ -384,7 +383,7 @@ def tkinter_reddit_big_post():
             messagebox.showerror("Error", "Invalid folder path!")
             return
 
-        ads_id1 = entry_ads_id.get()
+        ads_id1 = reddit_account_ads_id
         driver = ads_driver(ads_id1)
         mouse = ActionChains(driver)
         logger: LogWindow = LogWindow()
@@ -397,9 +396,7 @@ def tkinter_reddit_big_post():
                     logger,
                     mouse,
                     driver,
-                    subs_path,
-                    min_interval,
-                    max_interval
+                    subs_path
                 ),
                 daemon=True
             )

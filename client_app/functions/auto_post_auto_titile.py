@@ -6,11 +6,11 @@ import os
 
 from threading import Thread
 from shutil import move
+
 import win32clipboard as clip
 import win32con
 from io import BytesIO
 from PIL import Image
-from random import randint
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -29,6 +29,7 @@ from selenium.webdriver.remote.shadowroot import ShadowRoot
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebdriver
 
+from parse_titles import parse_titles
 from sys import path
 
 path.insert(1, "functions")
@@ -75,7 +76,7 @@ def post(
         file_path: str,
         title: str,
         flair: str | None = None
-) -> tuple[str, bool]:
+) -> str | tuple[str, bool]:
     copy_image_to_clipboard(file_path)
 
     post_url = POST_URL.format(subreddit=subreddit, type="IMAGE")
@@ -191,27 +192,19 @@ def big_post(
         mouse: ActionChains,
         driver: WebDriver,
         subs_path: str,
-        min_interval: int,
-        max_interval: int
 ) -> None:
 
     for subdir in os.listdir(subs_path):
         sub_path = os.path.join(subs_path, subdir)
 
-        subreddit_name = subdir
+        subreddit_name = subdir.split('=')[0]
 
-        good_subdir: bool = True
         if os.path.isdir(sub_path):
             used_path = os.path.join(sub_path, 'used')
 
             if not os.path.exists(used_path):
                 os.makedirs(used_path)
 
-            titles_path: str | None = None
-            flairs_path: str | None = None
-
-            titles: list[str] = []
-            flairs: list[str] | None = None
 
             images_paths: list[str] = []
 
@@ -220,80 +213,29 @@ def big_post(
 
                 file_title: str = file.title().lower()
 
-                if file_title == "titles.txt":
-                    if len(titles) > 0:
-                        logger.log_message(
-                            subreddit_name, "file must contain only one titles file")
-                        good_subdir = False
-                        break
-
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        titles = f.read().strip().split('\n')
-                        titles_path = file_path
-
-                elif file_title == "flairs.txt":
-                    if flairs is not None:
-                        logger.log_message(
-                            subreddit_name, "file must contain not more one flairs file")
-                        good_subdir = False
-                        break
-
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        flairs: list[str] = f.read().strip().split('\n')
-                        flairs = [flair.strip() for flair in flairs]
-                        flairs_path = file_path
-
-                elif file_title.endswith((".jpg", ".png", ".jpeg")):
+                if file_title.endswith((".jpg", ".png", ".jpeg")):
                     images_paths.append(file_path)
 
-            if not good_subdir:
-                continue
-
-            flag = True
-
-            if "" in titles:
-                titles.remove("")
-            if flairs is not None and "" in flairs:
-                flairs.remove("")
-
-            if len(images_paths) != len(titles):
-                logger.log_message(
-                    f"{subreddit_name}:", "amount of images do not match with amount of titles")
-                flag = False
-
-            if flairs is not None and len(images_paths) != len(flairs):
-                logger.log_message(
-                    f"{subreddit_name}:", "amount of imfages do not match with amount of flairs")
-                flag = False
-
-            if flairs is not None and len(titles) != len(flairs):
-                logger.log_message(
-                    f"{subreddit_name}:", "amount of titles do not match with amount of flairs")
-                flag = False
-
-            if titles_path is None:
-                logger.log_message(
-                    f"{subreddit_name}:", "there is no file \"titles.txt\"")
-                flag = False
-
-            print(len(images_paths), len(titles), len(flairs), images_paths, titles, flairs)
-
-            if not flag:
-                continue
 
             not_posted_titles: list[str] = []
             not_user_flairs: list[str] = []
+
+            sub_title = parse_titles(subreddit_name, reddit_account_ads_id)
+            flair = subdir.split('=')[1]
+            if flair == '':
+                flair = None
+
             for ind, image_path in enumerate(images_paths):
                 logger.log_message(
-                    f"{subreddit_name}->{titles[ind]}: ", end="")
+                    f"{subreddit_name}->{sub_title}: ", end="")
                 try:
                     message, is_successfully_posted =\
                         post(mouse,
                              driver,
                              subreddit_name,
                              image_path,
-                             titles[ind],
-                             flairs[ind] if flairs else None)
+                             parse_titles(subreddit_name),
+                             flair if flair else None)
 
                     logger.log_message(message)
                     if is_successfully_posted:
@@ -301,23 +243,13 @@ def big_post(
                         move(image_path, os.path.join(
                             sub_path, "used", image_name))
                     else:
-                        not_posted_titles.append(titles[ind])
-                        if flairs is not None:
-                            not_user_flairs.append(flairs[ind])
+                        not_posted_titles.append(sub_title)
+                        if flair is not None:
+                            not_user_flairs.append(flair)
                 except Exception as e:
                     logger.log_message(str(e).lower())
-                    not_posted_titles.append(titles[ind])
-                    if flairs is not None:
-                        not_user_flairs.append(flairs[ind])
 
-                sleep(randint(min_interval, max_interval) * 60)
 
-            with open(titles_path, 'w', encoding='utf-8') as f:
-                f.write('\n'.join(not_posted_titles))
-
-            if flairs is not None:
-                with open(flairs_path, 'w', encoding='utf-8') as f:
-                    f.write('\n'.join(not_user_flairs))
         logger.log_message(f"Posting {subreddit_name} if finished")
     driver.quit()
     logger.log_message("Posting is finished!")
@@ -362,7 +294,7 @@ def choose_email_window(update_status_callback):
     email_window.mainloop()
 
 
-def tkinter_reddit_auto_post():
+def tkinter_reddit_auto_post_auto_title():
     root = tk.Tk()
 
     def update_status():
@@ -384,22 +316,10 @@ def tkinter_reddit_auto_post():
         nonlocal root
 
         subs_path = entry_folder.get()
-        min_interval = entry_min_interval.get()
-        max_interval = entry_max_interval.get()
 
-        if not all([subs_path, min_interval, max_interval]):
+
+        if not all([subs_path]):
             messagebox.showerror("Error", "Fill in all input fields!")
-            return
-
-        try:
-            min_interval = int(min_interval)
-            max_interval = int(max_interval)
-        except ValueError:
-            messagebox.showerror("Error", "Interval must be integer!")
-            return
-
-        if max_interval < min_interval:
-            messagebox.showerror("Error", "Maximum time interval must be greater than minimum time interval!")
             return
 
         if not (os.path.exists(subs_path) and os.path.isdir(subs_path)):
@@ -420,8 +340,6 @@ def tkinter_reddit_auto_post():
                     mouse,
                     driver,
                     subs_path,
-                    min_interval,
-                    max_interval
                 ),
                 daemon=True
             )
@@ -482,29 +400,6 @@ def tkinter_reddit_auto_post():
         font=("Modern No. 20", 14)
     ).grid(row=2, column=0, padx=10, pady=10, sticky="e")
 
-    entry_min_interval = tk.Entry(
-        root,
-        font=("Modern No. 20", 14),
-        validate="key",
-        validatecommand=(valid, "%S")
-    )
-
-    entry_min_interval.grid(row=2, column=1, padx=10, pady=10)
-
-    tk.Label(
-        root,
-        text="Maximum time interval (mins):",
-        font=("Modern No. 20", 14)
-    ).grid(row=3, column=0, padx=10, pady=10, sticky="e")
-
-    entry_max_interval = tk.Entry(
-        root,
-        font=("Modern No. 20", 14),
-        validate="key",
-        validatecommand=(valid, "%S")
-    )
-    entry_max_interval.grid(row=3, column=1, padx=10, pady=10)
-
     tk.Button(
         root,
         text="Start Posting",
@@ -516,4 +411,4 @@ def tkinter_reddit_auto_post():
 
 
 if __name__ == "__main__":
-    tkinter_reddit_auto_post()
+    tkinter_reddit_auto_post_auto_title()

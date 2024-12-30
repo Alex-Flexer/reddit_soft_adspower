@@ -1,3 +1,4 @@
+from selenium.webdriver.chrome.service import Service
 from seleniumwire import webdriver
 from seleniumwire.webdriver import Chrome
 import requests
@@ -15,10 +16,12 @@ def ads_driver(ads_id) -> Chrome:
         print(resp["msg"])
         print("please check ads_id")
         sys.exit()
-    else:
-        chrome_driver = resp["data"]["webdriver"]
-        chrome_options = Options()
-        chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
-        driver = webdriver.Chrome(options=chrome_options)
+
+    chrome_driver = resp['data']["webdriver"]
+    service = Service(executable_path=chrome_driver)
+    chrome_options = Options()
+
+    chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
+    driver = webdriver.Chrome(options=chrome_options, service=service)
 
     return driver
