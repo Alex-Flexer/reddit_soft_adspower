@@ -46,7 +46,7 @@ PATTERN_ERROR_MESSAGE =\
 PATTERN_FLAIR_BUTTON =\
     "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
 PATTERN_SUBMIT_BUTTON = "#submit-post-button"
-PATTERN_TITLE_INPUT = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/section/div[1]/faceplate-tracker/faceplate-textarea-input"
+PATTERN_TITLE_INPUT = "faceplate-textarea-input[name=title]"
 PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
 PATTERN_FLAIR_SPANS =\
     "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
@@ -513,7 +513,3 @@ def tkinter_reddit_auto_post():
     ).grid(row=4, column=1, padx=10, pady=10)
 
     root.mainloop()
-
-
-if __name__ == "__main__":
-    tkinter_reddit_auto_post()

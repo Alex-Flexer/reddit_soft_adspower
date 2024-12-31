@@ -16,7 +16,7 @@ def check_user(email, password, token):
     json = None
     try:
         response = post(
-            "http://reddsyndicate.com/check/user-credentials/", data=data)
+            "http://thekarmamaster.com/check/user-credentials/", data=data)
         json = response.json()
     finally:
         return json

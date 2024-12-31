@@ -204,7 +204,3 @@ def uniq_tkinter():
     status_label.grid(row=4, column=0, columnspan=3, pady=10)
 
     root.mainloop()
-
-
-if __name__ == "__main__":
-    uniq_tkinter()
