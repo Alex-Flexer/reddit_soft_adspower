@@ -12,15 +12,10 @@ import win32con
 from io import BytesIO
 from PIL import Image
 
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-
-from login import slow_typing, rand_sleep, click
 
 from log_windows import LogWindow
 
-from re import findall
 from keyring import get_password
 
 from selenium.webdriver.remote.webelement import WebElement
@@ -40,19 +35,6 @@ from auto_post import post
 
 
 WebDriver = ChromeWebdriver | FirefoxWebdriver
-
-POST_URL = 'https://www.reddit.com/r/{subreddit}/submit/?type={type}'
-
-PATTERN_ERROR_MESSAGE =\
-    "div.items-baseline:nth-child(2) > r-form-validation-message:nth-child(1)"
-PATTERN_FLAIR_BUTTON =\
-    "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
-PATTERN_SUBMIT_BUTTON = "#submit-post-button"
-PATTERN_TITLE_INPUT = "faceplate-textarea-input[name=title]"
-PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
-PATTERN_FLAIR_SPANS =\
-    "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
-PATTERN_SELECT_TYPE = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/r-post-type-select"
 
 
 reddit_account_ads_id = None
