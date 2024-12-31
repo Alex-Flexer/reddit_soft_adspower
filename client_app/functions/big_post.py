@@ -137,11 +137,11 @@ def post(
                 choose_type_flag = True
 
         if not choose_type_flag:
-            return "unable to use image type"
+            return "unable to use image type", False
 
     current_type = findall(r".*\?type=([A-Z]+)", driver.current_url)
     if "IMAGE" not in current_type:
-        return "unable to use image type"
+        return "unable to use image type", False
 
     title_input_element = driver.find_element(
         By.XPATH, PATTERN_TITLE_INPUT)
