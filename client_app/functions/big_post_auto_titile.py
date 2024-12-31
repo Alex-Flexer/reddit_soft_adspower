@@ -119,7 +119,6 @@ def post(
     driver.switch_to.new_window('tab')
     driver.fullscreen_window()
 
-    print(driver.window_handles)
     driver.switch_to.window(driver.window_handles[-1])
 
     post_url = POST_URL.format(subreddit=subreddit, type="IMAGE")
