@@ -47,7 +47,7 @@ PATTERN_ERROR_MESSAGE =\
 PATTERN_FLAIR_BUTTON =\
     "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
 PATTERN_SUBMIT_BUTTON = "#submit-post-button"
-PATTERN_TITLE_INPUT = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/section/div[1]/faceplate-tracker/faceplate-textarea-input"
+PATTERN_TITLE_INPUT = "faceplate-textarea-input[name=title]"
 PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
 PATTERN_FLAIR_SPANS =\
     "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
@@ -225,7 +225,7 @@ def big_post(
             if flair == '':
                 flair = None
 
-            for ind, image_path in enumerate(images_paths):
+            for image_path in images_paths:
                 logger.log_message(
                     f"{subreddit_name}->{sub_title}: ", end="")
                 try:
@@ -393,13 +393,6 @@ def tkinter_reddit_auto_post_auto_title():
         command=select_folder
     ).grid(row=1, column=2, padx=10, pady=10)
 
-    valid = root.register(lambda text: text.isdigit())
-    tk.Label(
-        root,
-        text="Minimum time interval (mins):",
-        font=("Modern No. 20", 14)
-    ).grid(row=2, column=0, padx=10, pady=10, sticky="e")
-
     tk.Button(
         root,
         text="Start Posting",
@@ -409,6 +402,3 @@ def tkinter_reddit_auto_post_auto_title():
 
     root.mainloop()
 
-
-if __name__ == "__main__":
-    tkinter_reddit_auto_post_auto_title()

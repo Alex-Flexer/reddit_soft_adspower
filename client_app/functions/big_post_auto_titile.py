@@ -48,9 +48,7 @@ PATTERN_ERROR_MESSAGE =\
     "div.items-baseline:nth-child(2) > r-form-validation-message:nth-child(1)"
 PATTERN_FLAIR_BUTTON =\
     "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
-PATTERN_TITLE_INPUT = ("/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/"
-                       "section/faceplate-form-section[1]/fieldset/div[1]/faceplate-tracker/"
-                       "faceplate-textarea-input//label/div/span/span[1]/div/textarea")
+PATTERN_TITLE_INPUT = "faceplate-textarea-input[name=title]"
 PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
 PATTERN_FLAIR_SPANS =\
     "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
@@ -308,7 +306,7 @@ def tkinter_reddit_big_post_auto_title():
             return
 
         ads_id1 = reddit_account_ads_id
-        driver = ads_driver(ads_id1)
+        driver = ads_driver(ads_id1, False)
         mouse = ActionChains(driver)
         logger: LogWindow = LogWindow()
         logger.log_message("Logger is successfully initialized")
@@ -382,7 +380,3 @@ def tkinter_reddit_big_post_auto_title():
     ).grid(row=4, column=1, padx=10, pady=10)
 
     root.mainloop()
-
-
-if __name__ == "__main__":
-    tkinter_reddit_big_post_auto_title()

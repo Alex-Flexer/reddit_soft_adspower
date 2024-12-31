@@ -53,7 +53,3 @@ def tkinter_parse_acc_subs():
     btn_parse.grid(row=2, column=0, columnspan=2, pady=10)
 
     root.mainloop()
-
-
-if __name__ == '__main__':
-    tkinter_parse_acc_subs()
