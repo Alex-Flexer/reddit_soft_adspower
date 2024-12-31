@@ -36,6 +36,7 @@ path.insert(1, "functions")
 
 from ads_driver import ads_driver
 from db_funcs import get_reddit_accounts
+from big_post import post
 
 user_email = None
 reddit_account_ads_id = None
@@ -104,107 +105,6 @@ def copy_image_to_clipboard(image_path: str):
     clip.EmptyClipboard()
     clip.SetClipboardData(win32con.CF_DIB, data)
     clip.CloseClipboard()
-
-
-def post(
-        mouse: ActionChains,
-        driver: WebDriver,
-        subreddit: str,
-        file_path: str,
-        title: str,
-        flair: str | None = None
-) -> str | tuple[str, bool]:
-    copy_image_to_clipboard(file_path)
-
-    driver.switch_to.new_window('tab')
-    driver.fullscreen_window()
-
-    print(driver.window_handles)
-    driver.switch_to.window(driver.window_handles[-1])
-
-    post_url = POST_URL.format(subreddit=subreddit, type="IMAGE")
-    driver.get(post_url)
-
-    sleep(2)
-
-    current_type = findall(r".*\?type=([A-Z]+)", driver.current_url)
-    if "IMAGE" not in current_type:
-        type_selection: list[WebElement] = driver.find_element(
-            By.XPATH, PATTERN_SELECT_TYPE
-        ).shadow_root.find_elements(
-            By.CSS_SELECTOR, "faceplate-tracker"
-        )
-
-        choose_type_flag = False
-        for type_element in type_selection:
-            if "images" in type_element.text.lower():
-                click(mouse, type_element)
-                rand_sleep()
-                choose_type_flag = True
-
-        if not choose_type_flag:
-            return "unable to use image type"
-
-    current_type = findall(r".*\?type=([A-Z]+)", driver.current_url)
-    if "IMAGE" not in current_type:
-        return "unable to use image type"
-
-    title_input_element = driver.find_element(
-        By.XPATH, PATTERN_TITLE_INPUT)
-
-    click(mouse, title_input_element)
-    rand_sleep()
-
-    slow_typing(title, mouse, 7, 0.9)
-    rand_sleep()
-
-    title_input_element.send_keys(Keys.CONTROL, 'v')
-
-    sleep(4)
-
-    flair_button_shadow_root: ShadowRoot = driver.find_element(
-        By.CSS_SELECTOR, "#post-flair-modal").shadow_root
-    flair_button_span: WebElement = flair_button_shadow_root.find_element(
-        By.CSS_SELECTOR, PATTERN_FLAIR_BUTTON)
-
-    flair_button_text: str = flair_button_span.text
-
-    if flair is None and '*' in flair_button_text:
-        return "expected flairs", False
-
-    if flair is not None:
-        original_flair = flair.lower().strip()
-
-        click(mouse, flair_button_span)
-        sleep(5.82)
-
-        faceplate_dialog_element_root = flair_button_shadow_root.find_element(
-            By.CSS_SELECTOR, ".p-0")
-
-        flairs_spans: list[WebElement] = \
-            faceplate_dialog_element_root.find_elements(
-                By.CSS_SELECTOR, PATTERN_FLAIR_SPANS)
-
-        required_flair_element: WebElement | None = None
-
-        for flair_span in flairs_spans:
-            flair_text = flair_span.text.lower().strip()
-            if original_flair == flair_text:
-                required_flair_element = flair_span
-                break
-
-        if required_flair_element is None:
-            return f"flair \"{flair}\" was not found", False
-
-        click(mouse, required_flair_element)
-        rand_sleep()
-
-        add_flair_button = faceplate_dialog_element_root.find_element(
-            By.CSS_SELECTOR, PATTERN_ADD_FLAIR_BUTTON)
-        click(mouse, add_flair_button)
-        rand_sleep()
-
-        return "Was successfully prepared", True
 
 
 def big_post(
