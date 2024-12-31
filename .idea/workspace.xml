@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ffa3b85b-a8e2-424c-a78b-29f5e8831ba5" name="Changes" comment="fuck nigers. bomb moldova" />
+    <list default="true" id="ffa3b85b-a8e2-424c-a78b-29f5e8831ba5" name="Changes" comment="fuck nigers. bomb moldova">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -223,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735588398177</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fuck nigers. bomb moldova">
+      <option name="closed" value="true" />
+      <created>1735636472590</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1735636472590</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
