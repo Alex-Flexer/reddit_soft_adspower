@@ -107,7 +107,7 @@ def post(
         return "unable to use image type", False
 
     title_input_element = driver.find_element(
-        By.XPATH, PATTERN_TITLE_INPUT)
+        By.CSS_SELECTOR, PATTERN_TITLE_INPUT)
 
     click(mouse, title_input_element)
     rand_sleep()

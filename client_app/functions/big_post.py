@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from time import sleep
-from datetime import datetime, timedelta
 import os
 
 from threading import Thread
@@ -143,8 +142,7 @@ def post(
     if "IMAGE" not in current_type:
         return "unable to use image type", False
 
-    title_input_element = driver.find_element(
-        By.XPATH, PATTERN_TITLE_INPUT)
+    title_input_element = driver.find_element(By.CSS_SELECTOR, PATTERN_TITLE_INPUT)
 
     click(mouse, title_input_element)
     rand_sleep()

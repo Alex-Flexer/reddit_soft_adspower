@@ -11,21 +11,13 @@ import win32con
 from io import BytesIO
 from PIL import Image
 
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-
-from login import slow_typing, rand_sleep, click
 
 from log_windows import LogWindow
 
-from re import findall
 from keyring import get_password
 
 from parse_titles import parse_titles
-
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.remote.shadowroot import ShadowRoot
 
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebdriver
@@ -42,18 +34,6 @@ user_email = None
 reddit_account_ads_id = None
 
 WebDriver = ChromeWebdriver | FirefoxWebdriver
-
-POST_URL = 'https://www.reddit.com/r/{subreddit}/submit/?type={type}'
-
-PATTERN_ERROR_MESSAGE =\
-    "div.items-baseline:nth-child(2) > r-form-validation-message:nth-child(1)"
-PATTERN_FLAIR_BUTTON =\
-    "#reddit-post-flair-button > span:nth-child(1) > span:nth-child(1)"
-PATTERN_TITLE_INPUT = "faceplate-textarea-input[name=title]"
-PATTERN_ADD_FLAIR_BUTTON = "#post-flair-modal-apply-button"
-PATTERN_FLAIR_SPANS =\
-    "div.flex-col > div[name=flairId] > faceplate-radio-input > span"
-PATTERN_SELECT_TYPE = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-composer-form/r-post-type-select"
 
 
 def choose_email_window(update_status_callback):
