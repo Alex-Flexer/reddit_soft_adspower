@@ -377,7 +377,7 @@ async def process_check_transaction(message: Message, state: FSMContext):
         )
 
 
-@form_router.message(F.text.casefold() == "Check my accounts")
+@form_router.message(F.text.casefold() == "check my accounts")
 async def process_check_accounts(message: Message):
     if not await check_user_exists(message):
         return
@@ -400,7 +400,7 @@ async def process_check_accounts(message: Message):
     await message.answer(answer_text)
 
 
-@form_router.message(F.text.casefold() == "Check my subscriptions")
+@form_router.message(F.text.casefold() == "check my subscriptions")
 async def process_check_subscriptions(message: Message):
     if not await check_user_exists(message):
         return
@@ -423,7 +423,7 @@ async def process_check_subscriptions(message: Message):
     await message.answer(answer_text)
 
 
-@form_router.message(F.text.casefold() == "Add account")
+@form_router.message(F.text.casefold() == "add account")
 async def process_set_username_new_account(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return
@@ -451,7 +451,7 @@ async def process_add_account(message: Message, state: FSMContext):
     await state.set_state(None)
 
 
-@form_router.message(F.text.casefold() == "Delete account")
+@form_router.message(F.text.casefold() == "delete account")
 async def process_set_username_deletion_account(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return
