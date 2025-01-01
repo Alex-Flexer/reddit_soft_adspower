@@ -434,7 +434,6 @@ def tkinter_reddit_big_post():
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
 
-
     tk.Label(
         root,
         text="Select subs folder:",

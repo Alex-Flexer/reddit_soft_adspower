@@ -77,7 +77,8 @@ def start_registration():
         else:
             messagebox.showerror("Error", response_json["message"])
 
-    tk.Button(root, text="Enter", font=("Modern No. 20", 18), command=submit_login_password).grid(row=2, column=0, columnspan=2, pady=10)
+    tk.Button(root, text="Enter", font=("Modern No. 20", 18), command=submit_login_password).grid(row=2, column=0,
+                                                                                                  columnspan=2, pady=10)
 
     root.mainloop()
 
@@ -88,7 +89,8 @@ def request_code():
     root = tk.Tk()
     root.title("Confirm Email Code")
 
-    tk.Label(root, text="Enter your confirmation code:", font=("Modern No. 20", 18)).grid(row=0, column=0, padx=10, pady=5)
+    tk.Label(root, text="Enter your confirmation code:", font=("Modern No. 20", 18)).grid(row=0, column=0, padx=10,
+                                                                                          pady=5)
     entry_code = tk.Entry(root)
     entry_code.grid(row=0, column=1, padx=10, pady=5)
 

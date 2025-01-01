@@ -1,8 +1,6 @@
 from time import sleep
 import re
 from random import choice
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.webdriver import WebDriver as chrome_webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as firefox_webdriver
 from ads_driver import ads_driver
@@ -18,6 +16,7 @@ WebDriver = chrome_webdriver | firefox_webdriver
 def parse_titles_list(subreddit: str):
     driver = create_driver()
     log_window = LogWindow()
+    driver.execute_script(f"window.scrollBy(0, 5);")
 
     post_url = f'http://www.reddit.com/r/{subreddit}/new'
 

@@ -5,22 +5,21 @@ from selenium.webdriver.common.by import By
 
 import tkinter as tk
 
-
 from time import sleep
 
-from selenium.webdriver import Chrome
 
 from log_windows import LogWindow
 from driver import create_driver
-
 
 WebDriver = chrome_webdriver | firefox_webdriver
 
 TITLES_PATTERN = 'a:nth-child(1) > faceplate-screen-reader-content:nth-child(1)'
 
 
-def parse_acc_titles(username: str) -> str:
+def parse_acc_titles(username: str):
     driver = create_driver()
+    driver.execute_script(f"window.scrollBy(0, 5);")
+
     log_window = LogWindow()
     post_url = f'https://www.reddit.com/user/{username}/submitted/'
     sleep(2)
@@ -35,7 +34,8 @@ def parse_acc_titles(username: str) -> str:
         log_window.log_message(f"No titles found in acc'{username}'")
         filtered_titles = 'default title'
 
-    print('\n'.join(titles))
+    log_window.log_message('\n'.join(titles))
+
 
 def tkinter_parse_acc_titles():
     root = tk.Tk()

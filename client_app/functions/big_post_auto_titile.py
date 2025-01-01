@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from time import sleep
 import os
 
 from threading import Thread
@@ -235,7 +234,6 @@ def tkinter_reddit_big_post_auto_title():
         )
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
-
 
     tk.Label(
         root,

@@ -5,14 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffa3b85b-a8e2-424c-a78b-29f5e8831ba5" name="Changes" comment="fuck nigers. bomb moldova">
-      <change afterPath="$PROJECT_DIR$/client_app/functions/driver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/acc_title_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/acc_title_parse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/ads_driver.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/ads_driver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/auto_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/auto_post.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/auto_post_auto_titile.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/auto_post_auto_titile.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/big_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/converters.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/converters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/db_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/db_funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/driver.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/driver.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/parse_titles.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/parse_titles.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/username_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/username_parse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/tkinter_app/main_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/tkinter_app/main_app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/tkinter_app/main_func_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/tkinter_app/main_func_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -159,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735636472590</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fuck nigers. bomb moldova">
+      <option name="closed" value="true" />
+      <created>1735756873474</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1735756873474</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

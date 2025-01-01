@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from time import sleep
-from datetime import datetime, timedelta
 import os
 
 from threading import Thread
@@ -18,8 +16,6 @@ from log_windows import LogWindow
 
 from keyring import get_password
 
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.remote.shadowroot import ShadowRoot
 
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebdriver
@@ -71,7 +67,6 @@ def big_post(
             if not os.path.exists(used_path):
                 os.makedirs(used_path)
 
-
             images_paths: list[str] = []
 
             for file in os.listdir(sub_path):
@@ -81,7 +76,6 @@ def big_post(
 
                 if file_title.endswith((".jpg", ".png", ".jpeg")):
                     images_paths.append(file_path)
-
 
             not_posted_titles: list[str] = []
             not_user_flairs: list[str] = []
@@ -100,7 +94,7 @@ def big_post(
                              driver,
                              subreddit_name,
                              image_path,
-                             parse_titles(subreddit_name),
+                             parse_titles(subreddit_name, reddit_account_ads_id),
                              flair if flair else None)
 
                     logger.log_message(message)
@@ -115,14 +109,12 @@ def big_post(
                 except Exception as e:
                     logger.log_message(str(e).lower())
 
-
         logger.log_message(f"Posting {subreddit_name} if finished")
     driver.quit()
     logger.log_message("Posting is finished!")
 
 
 def choose_email_window(update_status_callback):
-    """Open a window for choosing an account."""
     global user_email
     user_email = get_password("user", "email")
 
@@ -183,7 +175,6 @@ def tkinter_reddit_auto_post_auto_title():
 
         subs_path = entry_folder.get()
 
-
         if not all([subs_path]):
             messagebox.showerror("Error", "Fill in all input fields!")
             return
@@ -243,7 +234,6 @@ def tkinter_reddit_auto_post_auto_title():
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
 
-
     tk.Label(
         root,
         text="Select subs folder:",
@@ -267,4 +257,3 @@ def tkinter_reddit_auto_post_auto_title():
     ).grid(row=4, column=1, padx=10, pady=10)
 
     root.mainloop()
-

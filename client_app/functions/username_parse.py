@@ -1,9 +1,7 @@
 from time import sleep
-import re
 
 from selenium.webdriver.chrome.webdriver import WebDriver as chrome_webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as firefox_webdriver
-from selenium.webdriver import Chrome
 import tkinter as tk
 
 from selenium.webdriver.common.by import By
@@ -18,9 +16,10 @@ USERNAMES_PATTERN = ("span:nth-child(2) > span:nth-child(1) > span:nth-child(1) 
                      "faceplate-hovercard:nth-child(1) > faceplate-tracker:nth-child(1) > a:nth-child(1)")
 
 
-def parse_username(subreddit: str) -> str:
+def parse_username(subreddit: str):
     driver = create_driver()
     log_window = LogWindow()
+    driver.execute_script(f"window.scrollBy(0, 5);")
 
     post_url = rf'http://www.reddit.com/r/{subreddit}/new'
     sleep(2)
@@ -35,7 +34,7 @@ def parse_username(subreddit: str) -> str:
         log_window.log_message(f"No titles found on the subreddit '{subreddit}'")
         usernames = 'default username'
 
-    print('\n'.join(usernames))
+    log_window.log_message('\n'.join(usernames))
 
 
 def tkinter_parse_username():

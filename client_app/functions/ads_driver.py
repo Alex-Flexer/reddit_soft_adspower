@@ -27,7 +27,8 @@ def ads_driver(ads_id, headless=True) -> Chrome:
         chrome_options.add_argument("--window-size=1920,1080")
         chrome_options.add_argument('--ignore-certificate-errors')
         chrome_options.add_argument('--allow-running-insecure-content')
-        user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
+        user_agent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)'
+                      ' Chrome/60.0.3112.50 Safari/537.36')
         chrome_options.add_argument(f'user-agent={user_agent}')
 
     driver = webdriver.Chrome(options=chrome_options, service=service)

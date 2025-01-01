@@ -56,6 +56,7 @@ PATTERN_SELECT_TYPE = "/html/body/shreddit-app/div[1]/div[1]/div/main/r-post-com
 reddit_account_ads_id = None
 user_email = None
 
+
 def copy_image_to_clipboard(image_path: str):
     image = Image.open(image_path)
     output = BytesIO()
@@ -458,7 +459,6 @@ def tkinter_reddit_auto_post():
         )
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
-
 
     tk.Label(
         root,

@@ -15,8 +15,10 @@ WebDriver = chrome_webdriver | firefox_webdriver
 TITLES_PATTERN = ('span:nth-child(2) > span:nth-child(1) > span:nth-child(1) > shreddit-async-loader:nth-child(1)'
                   ' > faceplate-hovercard:nth-child(1) > a:nth-child(1) > span:nth-child(2)')
 
-def parse_acc_subs(username: str) -> str:
+
+def parse_acc_subs(username: str):
     driver = create_driver()
+    driver.execute_script(f"window.scrollBy(0, 5);")
 
     log_window = LogWindow()
     post_url = f'https://www.reddit.com/user/{username}/submitted/'
@@ -30,9 +32,10 @@ def parse_acc_subs(username: str) -> str:
 
     if not titles:
         log_window.log_message(f"No subs found in acc'{username}'")
-        filtered_titles = 'default sub'
+        titles = 'default sub'
 
-    print('\n'.join(titles))
+    log_window.log_message('\n'.join(titles))
+
 
 def tkinter_parse_acc_subs():
     root = tk.Tk()
