@@ -199,7 +199,7 @@ def post(
         click(mouse, add_flair_button)
         rand_sleep()
 
-        return "Was successfully prepared", True
+    return "Was successfully prepared", True
 
 
 def big_post(

@@ -73,7 +73,7 @@ def parse_titles(subreddit: str, ads_id) -> str:
         'Locked post', 'Sticked post', 'Archived post', 'Reddit resources', 'Primary', 'Community information',
         'Edit user flair', "'", '"', 'New rule announcement.',
         f'r/{subreddit} - Join the official amihot Discord server ', 'Join the official amihot Discord server ',
-        f'r/{subreddit} - New rule announcement.', 'Back', 'Close', 'Promotion', 'Stickied post'
+        f'r/{subreddit} - New rule announcement.', 'Back', 'Close', 'Promotion', 'Stickied post', 'Create Post'
     }
     filtered_titles = [title for title in titles if title not in to_remove]
     for i, title in enumerate(filtered_titles):

@@ -146,7 +146,7 @@ def big_post(
                         if flair is not None:
                             not_user_flairs.append(flair)
                 except Exception as e:
-                    logger.log_message(str(e).lower())
+                    logger.log_message(str(e))
 
         logger.log_message(f"Posting {subreddit_name} if finished")
     driver.quit()
