@@ -345,4 +345,6 @@ async def add_reddit_account(request: Request) -> JSONResponse:
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host="90.156.168.186",
-                port=80, reload=True, workers=12)
+                port=443, reload=True, workers=12,
+                ssl_keyfile="/etc/letsencrypt/live/thekarmamaster.com/privkey.pem",
+                ssl_certfile="/etc/letsencrypt/live/thekarmamaster.com/fullchain.pem")

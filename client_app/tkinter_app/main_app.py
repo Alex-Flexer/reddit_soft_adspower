@@ -28,7 +28,7 @@ def get_user_email():
 def update_token(email: str) -> None | str:
     data = dumps({"email": email})
     try:
-        response = post("http://thekarmamaster.com/update/user-token/", data=data)
+        response = post("https://thekarmamaster.com/update/user-token/", data=data)
         json = response.json()
     except ConnectionError:
         messagebox.showerror("Error", "Network error")
@@ -97,7 +97,7 @@ def request_code():
 
         data = dumps({"email": user_email, "code": entered_code})
         try:
-            response = post("http://thekarmamaster.com/confirm/email-code", data=data)
+            response = post("https://thekarmamaster.com/confirm/email-code", data=data)
             response_json = response.json()
         except ConnectionError:
             messagebox.showerror("Error", "Network error")
@@ -120,7 +120,7 @@ def authenticate_user(email: str, password: str) -> dict | None:
     json = None
 
     try:
-        response = post("http://thekarmamaster.com/login/user", data=data)
+        response = post("https://thekarmamaster.com/login/user", data=data)
         json = response.json()
     finally:
         return json

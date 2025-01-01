@@ -7,7 +7,7 @@ def get_reddit_accounts(user_email: str) -> tuple[list[str] | None, str]:
     data = dumps({"email": user_email})
     try:
         response = post(
-            "http://thekarmamaster.com/get/reddit-accounts", data=data)
+            "https://thekarmamaster.com/get/reddit-accounts", data=data)
         data = response.json()
         if data["result"]:
             result = data["accounts"], None
