@@ -114,6 +114,9 @@ def post(
 ) -> tuple[str, bool]:
     copy_image_to_clipboard(file_path)
 
+    driver.switch_to.new_window('tab')
+    driver.fullscreen_window()
+
     post_url = POST_URL.format(subreddit=subreddit, type="IMAGE")
     driver.get(post_url)
 

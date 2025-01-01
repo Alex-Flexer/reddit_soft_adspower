@@ -5,13 +5,10 @@ from selenium.webdriver.common.by import By
 
 import tkinter as tk
 
-import re
-
 from time import sleep
 
-from selenium.webdriver import Chrome
-
 from log_windows import LogWindow
+from driver import create_driver
 
 WebDriver = chrome_webdriver | firefox_webdriver
 
@@ -19,7 +16,8 @@ TITLES_PATTERN = ('span:nth-child(2) > span:nth-child(1) > span:nth-child(1) > s
                   ' > faceplate-hovercard:nth-child(1) > a:nth-child(1) > span:nth-child(2)')
 
 def parse_acc_subs(username: str) -> str:
-    driver = Chrome()
+    driver = create_driver()
+
     log_window = LogWindow()
     post_url = f'https://www.reddit.com/user/{username}/submitted/'
     sleep(2)

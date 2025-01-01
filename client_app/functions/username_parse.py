@@ -9,7 +9,8 @@ import tkinter as tk
 from selenium.webdriver.common.by import By
 from log_windows import LogWindow
 
-from ads_driver import ads_driver
+from driver import create_driver
+
 
 WebDriver = chrome_webdriver | firefox_webdriver
 
@@ -18,7 +19,7 @@ USERNAMES_PATTERN = ("span:nth-child(2) > span:nth-child(1) > span:nth-child(1) 
 
 
 def parse_username(subreddit: str) -> str:
-    driver = Chrome()
+    driver = create_driver()
     log_window = LogWindow()
 
     post_url = rf'http://www.reddit.com/r/{subreddit}/new'

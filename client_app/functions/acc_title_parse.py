@@ -11,6 +11,8 @@ from time import sleep
 from selenium.webdriver import Chrome
 
 from log_windows import LogWindow
+from driver import create_driver
+
 
 WebDriver = chrome_webdriver | firefox_webdriver
 
@@ -18,7 +20,7 @@ TITLES_PATTERN = 'a:nth-child(1) > faceplate-screen-reader-content:nth-child(1)'
 
 
 def parse_acc_titles(username: str) -> str:
-    driver = Chrome()
+    driver = create_driver()
     log_window = LogWindow()
     post_url = f'https://www.reddit.com/user/{username}/submitted/'
     sleep(2)
