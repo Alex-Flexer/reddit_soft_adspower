@@ -20,7 +20,7 @@ def download_software(
 
     data = dumps({"email": username, "password": password})
     try:
-        resp = post("http://reddsyndicate.com/get/software", data=data)
+        resp = post("https://thekarmamaster.com/get/software", data=data)
     except ConnectionError:
         return -1, None
 
@@ -44,7 +44,7 @@ def download_requirements(path_to_requirements: str):
 def login_user(username: str, password: str) -> tuple[bool, str]:
     data = dumps({"email": username, "password": password})
     try:
-        resp = post("http://reddsyndicate.com/login/user", data=data)
+        resp = post("https://thekarmamaster.com/login/user", data=data)
     except ConnectionError:
         return False, "Network error"
     else:

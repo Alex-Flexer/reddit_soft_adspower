@@ -137,7 +137,7 @@ async def command_help(message: Message) -> None:
         "Then you will get more functionality inside the chatbot.\n\n"
         "When subscribing, you purchase slots for accounts, after which you can add accounts to these slots and remove them as needed.\n\n"
         "During the trial period, you are provided with one account slot for 3 days (to try a trial period use command /trial)\n\n"
-        f"Source links:  {html.link('Installer', 'http://reddsyndicate.com/get/installer')}   {html.link('Instruction', 'http://reddsyndicate.com/get/instruction')}\n\n"
+        f"Source links:  {html.link('Installer', 'https://thekarmamaster.com/get/installer')}   {html.link('Instruction', 'https://thekarmamaster.com/get/instruction')}\n\n"
         f"Also if you have some software problem or some other questions you can contact our support team."
     )
 
