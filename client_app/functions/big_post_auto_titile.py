@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from time import sleep
 import os
 
 from threading import Thread
@@ -147,7 +146,7 @@ def big_post(
                         if flair is not None:
                             not_user_flairs.append(flair)
                 except Exception as e:
-                    logger.log_message(str(e).lower())
+                    logger.log_message(str(e))
 
         logger.log_message(f"Posting {subreddit_name} if finished")
     driver.quit()
@@ -235,7 +234,6 @@ def tkinter_reddit_big_post_auto_title():
         )
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
-
 
     tk.Label(
         root,

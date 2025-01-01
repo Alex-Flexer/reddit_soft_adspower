@@ -59,8 +59,10 @@ def tkinter_converters():
     tk.Button(root, text="Browse", command=browse_file).grid(row=0, column=2, padx=10, pady=10)
 
     conversion_choice = tk.StringVar(value='png')
-    tk.Radiobutton(root, text="Convert to PNG", variable=conversion_choice, value='png').grid(row=1, column=0, padx=10, pady=10)
-    tk.Radiobutton(root, text="Convert to MP4", variable=conversion_choice, value='mp4').grid(row=1, column=1, padx=10, pady=10)
+    tk.Radiobutton(root, text="Convert to PNG", variable=conversion_choice, value='png').grid(row=1,column=0,
+                                                                                              padx=10, pady=10)
+    tk.Radiobutton(root, text="Convert to MP4", variable=conversion_choice, value='mp4').grid(row=1, column=1, padx=10,
+                                                                                              pady=10)
 
     tk.Button(root, text="Convert", command=convert).grid(row=2, column=1, padx=10, pady=10)
 

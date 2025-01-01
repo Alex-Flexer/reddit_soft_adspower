@@ -114,6 +114,9 @@ def post(
 ) -> tuple[str, bool]:
     copy_image_to_clipboard(file_path)
 
+    driver.switch_to.new_window('tab')
+    driver.fullscreen_window()
+
     post_url = POST_URL.format(subreddit=subreddit, type="IMAGE")
     driver.get(post_url)
 
@@ -196,7 +199,7 @@ def post(
         click(mouse, add_flair_button)
         rand_sleep()
 
-        return "Was successfully prepared", True
+    return "Was successfully prepared", True
 
 
 def big_post(
@@ -430,7 +433,6 @@ def tkinter_reddit_big_post():
         )
 
     entry_ads_id.grid(row=0, column=2, padx=10, pady=10)
-
 
     tk.Label(
         root,

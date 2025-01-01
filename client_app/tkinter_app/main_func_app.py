@@ -69,7 +69,7 @@ def create_window():
         ("Preparation for post with your titles", tkinter_reddit_big_post),
         ("Full post with your titles", tkinter_reddit_auto_post),
         ("Full post with parsed titles", tkinter_reddit_auto_post_auto_title),
-        ("Uniqueize photo or video", uniq_tkinter),
+        ("Unify photo or video", uniq_tkinter),
         ("Converters", tkinter_converters)
     ]
 
@@ -87,6 +87,7 @@ def create_window():
         button.pack(pady=10)
 
     root.mainloop()
+
 
 if __name__ == "__main__":
     create_window()
