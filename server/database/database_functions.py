@@ -227,6 +227,7 @@ def delete_user(email: str) -> None:
 
 
 def delete_subscription(subscription_id: int) -> None:
+    session.query(RedditAccount).filter_by(subscription_id=subscription_id).delete()
     session.query(Subscription).filter_by(id=subscription_id).delete()
     session.commit()
 
