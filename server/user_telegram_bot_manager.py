@@ -318,7 +318,7 @@ async def process_set_amount_accounts(message: Message, state: FSMContext):
         if amount <= 10:
             return amount * 20
         if amount > 10:
-            return 100 + prefix_prices[min(3, amount - 11)] + max(0, amount - 14) * 12
+            return 200 + prefix_prices[min(3, amount - 11)] + max(0, amount - 14) * 12
 
     if not await check_user_exists(message):
         return
