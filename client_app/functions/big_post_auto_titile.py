@@ -16,7 +16,7 @@ from log_windows import LogWindow
 
 from keyring import get_password
 
-from parse_titles import parse_titles
+from parse_titles import get_random_title
 
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebdriver
@@ -120,12 +120,12 @@ def big_post(
             not_posted_titles: list[str] = []
             not_user_flairs: list[str] = []
 
-            sub_title = parse_titles(subreddit_name, reddit_account_ads_id)
+            sub_title = get_random_title(subreddit_name, logger)
             flair = subdir.split('=')[1]
             if flair == '':
                 flair = None
 
-            for ind, image_path in enumerate(images_paths):
+            for image_path in images_paths:
                 logger.log_message(
                     f"{subreddit_name}->{sub_title}: ", end="")
                 try:
