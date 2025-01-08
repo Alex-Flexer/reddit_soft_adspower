@@ -60,7 +60,7 @@ CHECKING_TRANSACTION_KEYBOARD_MARKUP =\
         keyboard=[
             [
                 KeyboardButton(text="Cancel"),
-                KeyboardButton(text="Check Transaction"),
+                KeyboardButton(text="Verify Transaction"),
             ]
         ],
         resize_keyboard=True,
@@ -103,9 +103,10 @@ SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP =\
 class Form(StatesGroup):
     come_up_password = State()
     set_amount_accounts = State()
-    check_transaction = State()
     add_account = State()
     delete_account = State()
+    verify_transaction = State()
+    verifying_transaction = State()
 
 
 async def check_user_exists(message: Message) -> bool:
@@ -208,7 +209,7 @@ async def command_cancel(message: Message, state: FSMContext) -> None:
         "Cancelled.",
         reply_markup=\
             SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
-            if (current_state in {Form.set_amount_accounts, Form.check_transaction, Form.add_account, Form.delete_account})
+            if (current_state in {Form.set_amount_accounts, Form.verify_transaction, Form.add_account, Form.delete_account})
             else ReplyKeyboardRemove()
     )
 
@@ -299,7 +300,7 @@ async def process_home(message: Message):
     )
 
 
-@form_router.message(F.text.casefold() == "buy a subscription")
+@form_router.message(F.text.casefold() == "buy a subscription", default_state)
 async def process_buy_accounts(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return
@@ -317,7 +318,7 @@ async def process_set_amount_accounts(message: Message, state: FSMContext):
         prefix_prices = [18, 34, 48, 60]
         if amount <= 10:
             return amount * 20
-        if amount > 10:
+        else:
             return 200 + prefix_prices[min(3, amount - 11)] + max(0, amount - 14) * 12
 
     if not await check_user_exists(message):
@@ -336,18 +337,18 @@ async def process_set_amount_accounts(message: Message, state: FSMContext):
             reply_markup=CHECKING_TRANSACTION_KEYBOARD_MARKUP
         )
         await state.update_data(accounts_amount=accounts_amount)
-        await state.set_state(Form.check_transaction)
+        await state.set_state(Form.verify_transaction)
 
 
-@form_router.message(Form.check_transaction)
+@form_router.message(Form.verify_transaction)
 async def process_check_transaction(message: Message, state: FSMContext):
     if not await check_user_exists(message):
         return
 
-    await state.set_state(None)
-
     username: str = message.from_user.username
     active_price = db.get_user_active_subscription_price(username)
+
+    await state.set_state(Form.verifying_transaction)
 
     wainting_message = await message.answer(
         "Transaction is being verified...\n"
@@ -375,6 +376,8 @@ async def process_check_transaction(message: Message, state: FSMContext):
             answer_text,
             reply_markup=SUBSCRIPTIONS_MANAGER_KEYBOARD_MARKUP
         )
+    finally:
+        await state.set_state(None)
 
 
 @form_router.message(F.text.casefold() == "check my accounts")
@@ -478,7 +481,7 @@ async def process_delete_account(message: Message, state: FSMContext):
     await state.set_state(None)
 
 
-@form_router.message(default_state)
+@form_router.message()
 async def process_unknown_command(message: Message):
     await message.answer("Unknow command.")
 
