@@ -20,7 +20,7 @@ from keyring import get_password
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebdriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxWebdriver
 
-from parse_titles import parse_titles
+from parse_titles import get_random_title
 from sys import path
 
 path.insert(1, "functions")
@@ -80,7 +80,7 @@ def big_post(
             not_posted_titles: list[str] = []
             not_user_flairs: list[str] = []
 
-            sub_title = parse_titles(subreddit_name, reddit_account_ads_id)
+            sub_title = get_random_title(subreddit_name, logger)
             flair = subdir.split('=')[1]
             if flair == '':
                 flair = None
@@ -94,7 +94,7 @@ def big_post(
                              driver,
                              subreddit_name,
                              image_path,
-                             parse_titles(subreddit_name, reddit_account_ads_id),
+                             sub_title,
                              flair if flair else None)
 
                     logger.log_message(message)
