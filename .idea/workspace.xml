@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffa3b85b-a8e2-424c-a78b-29f5e8831ba5" name="Changes" comment="fuck nigers. bomb moldova">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/functions/big_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,6 +172,17 @@
     </task>
     <option name="localTasksCounter" value="6" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fuck nigers. bomb moldova" />

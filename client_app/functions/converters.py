@@ -4,7 +4,12 @@ import os
 import tkinter as tk
 from tkinter import filedialog
 from log_windows import LogWindow
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
 
+user_email = None
+
+from keyring import get_password
 
 def convert_to_png(input_path, output_folder='output'):
     log_window = LogWindow()
@@ -33,6 +38,13 @@ def convert_to_mp4(input_path, output_folder='output'):
 
 
 def tkinter_converters():
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
+
     def browse_file():
         file_path = filedialog.askopenfilename()
         entry_path.delete(0, tk.END)

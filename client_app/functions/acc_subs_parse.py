@@ -5,7 +5,9 @@ from selenium.webdriver.common.by import By
 
 import tkinter as tk
 
+
 from time import sleep
+
 
 from log_windows import LogWindow
 from driver import create_driver
@@ -14,9 +16,25 @@ WebDriver = chrome_webdriver | firefox_webdriver
 
 TITLES_PATTERN = ('span:nth-child(2) > span:nth-child(1) > span:nth-child(1) > shreddit-async-loader:nth-child(1)'
                   ' > faceplate-hovercard:nth-child(1) > a:nth-child(1) > span:nth-child(2)')
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
+
+user_email = None
+
+from keyring import get_password
 
 
 def parse_acc_subs(username: str):
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
+
+    if accounts is None:
+        messagebox.showerror("Error", msg)
+        return
     driver = create_driver()
     driver.execute_script(f"window.scrollBy(0, 5);")
 

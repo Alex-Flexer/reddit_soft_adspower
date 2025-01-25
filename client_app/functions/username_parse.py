@@ -8,7 +8,12 @@ from selenium.webdriver.common.by import By
 from log_windows import LogWindow
 
 from driver import create_driver
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
 
+user_email = None
+
+from keyring import get_password
 
 WebDriver = chrome_webdriver | firefox_webdriver
 
@@ -38,6 +43,14 @@ def parse_username(subreddit: str):
 
 
 def tkinter_parse_username():
+
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
+
     root = tk.Tk()
     root.title("Reddit Title Parser")
 

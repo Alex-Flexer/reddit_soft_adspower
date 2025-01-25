@@ -7,7 +7,12 @@ import tkinter as tk
 
 from time import sleep
 
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
 
+user_email = None
+
+from keyring import get_password
 from log_windows import LogWindow
 from driver import create_driver
 
@@ -17,6 +22,12 @@ TITLES_PATTERN = 'a:nth-child(1) > faceplate-screen-reader-content:nth-child(1)'
 
 
 def parse_acc_titles(username: str):
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
     driver = create_driver()
     driver.execute_script(f"window.scrollBy(0, 5);")
 

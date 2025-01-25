@@ -6,9 +6,22 @@ from moviepy import VideoFileClip
 from threading import Thread
 
 from log_windows import LogWindow
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
 
+user_email = None
+
+from keyring import get_password
 
 def uniq_tkinter():
+
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
+
     def uniqueize(logger: LogWindow, tp: str, input_path, amount):
         def get_file_extension(file_path: str) -> str:
             _, extension = os.path.splitext(file_path)

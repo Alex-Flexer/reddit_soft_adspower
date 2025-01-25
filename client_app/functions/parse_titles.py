@@ -14,7 +14,12 @@ from log_windows import LogWindow
 
 
 WebDriver = chrome_webdriver | firefox_webdriver
+from db_funcs import get_reddit_accounts
+from tkinter import messagebox
 
+user_email = None
+
+from keyring import get_password
 
 def get_titles(subreddit: str):
     driver = create_driver()
@@ -60,6 +65,14 @@ def get_random_title(subreddit: str, logger: LogWindow) -> str:
 
 
 def tkinter_parse_titles():
+
+    global user_email
+    user_email = get_password("user", "email")
+
+    if user_email is None:
+        messagebox.showerror('No accounts bought')
+    accounts, msg = get_reddit_accounts(user_email)
+
     def parse_titles_wrapper(subreddit: str, logger: LogWindow):
         root.destroy()
         thr = Thread(target=parse_titles, args=(subreddit, logger), daemon=True)
