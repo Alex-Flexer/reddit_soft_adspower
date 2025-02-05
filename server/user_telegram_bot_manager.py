@@ -121,11 +121,11 @@ async def check_user_exists(message: Message) -> bool:
 async def command_start(message: Message) -> None:
     username = message.from_user.username
     await message.answer(
-        "You are welcomed by Karma-Master! Some about as:\n\n"
-        "Karma Master is a powerful automation tool tailored for "
-        "users, businesses, and creators who want to promote their Reddit accounts.\n\n"
-        "With a single software you can handle millions of tasks at once — from content "
-        "scheduling and posting to data gathering and community engagement.",
+        "You are welcomed by The Karma Master! Here’s some brief info about us:\n\n"
+        "The Karma Master is a powerful automation tool tailored for users, businesses, "
+        "and creators who want to promote their products via Reddit.\n\n"
+        "With a single software you can multiple tasks at once — from "
+        "automated posting to data scraping and community engagement.",
         reply_markup=(MAIN_KEYBOARD_MARKUP if db.check_user_exists(username) else ReplyKeyboardRemove())
     )
 
