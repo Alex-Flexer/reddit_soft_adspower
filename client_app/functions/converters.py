@@ -64,6 +64,7 @@ def tkinter_converters():
 
     root = tk.Tk()
     root.title("File Converter")
+    root.resizable(False, False)
 
     tk.Label(root, text="Select a file:").grid(row=0, column=0, padx=10, pady=10)
     entry_path = tk.Entry(root, width=50)

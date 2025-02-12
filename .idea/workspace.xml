@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ffa3b85b-a8e2-424c-a78b-29f5e8831ba5" name="Changes" comment="fuck nigers. bomb moldova">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/reddit_soft_adspower.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/acc_subs_parse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/acc_title_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/acc_title_parse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/auto_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/auto_post.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/auto_post_auto_titile.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/auto_post_auto_titile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/big_post.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/big_post_auto_titile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/converters.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/converters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/image_editing.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/image_editing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/functions/parse_titles.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/functions/parse_titles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/tkinter_app/main_func_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/tkinter_app/main_func_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

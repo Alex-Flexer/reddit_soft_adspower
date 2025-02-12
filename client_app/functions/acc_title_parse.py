@@ -51,6 +51,7 @@ def parse_acc_titles(username: str):
 def tkinter_parse_acc_titles():
     root = tk.Tk()
     root.title("Reddit Account Titles Parser")
+    root.resizable(False, False)
 
     tk.Label(
         root,

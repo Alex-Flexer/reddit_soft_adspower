@@ -410,6 +410,7 @@ def tkinter_reddit_big_post():
         logger.run(on_close)
 
     root.title("Reddit Big Poster")
+    root.resizable(False, False)
 
     tk.Label(
         root,

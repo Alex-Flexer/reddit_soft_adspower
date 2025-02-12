@@ -210,6 +210,7 @@ def tkinter_reddit_auto_post_auto_title():
         logger.run(on_close)
 
     root.title("Reddit Big Poster")
+    root.resizable(False, False)
 
     tk.Label(
         root,

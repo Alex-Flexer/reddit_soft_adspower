@@ -58,6 +58,7 @@ def parse_acc_subs(username: str):
 def tkinter_parse_acc_subs():
     root = tk.Tk()
     root.title("Reddit Account Subs Parser")
+    root.resizable(False, False)
 
     tk.Label(
         root,

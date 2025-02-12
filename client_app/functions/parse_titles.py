@@ -81,6 +81,7 @@ def tkinter_parse_titles():
 
     root = tk.Tk()
     root.title("Reddit Title Parser")
+    root.resizable(False, False)
 
     tk.Label(root, text="Subreddit:").grid(row=0, column=0, padx=10, pady=10)
     entry_subreddit = tk.Entry(root)

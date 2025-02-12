@@ -174,6 +174,7 @@ def uniq_tkinter():
 
     root = tk.Tk()
     root.title("Uniqueizer")
+    root.resizable(False, False)
 
     tk.Label(root, text="Select file:", font=("Modern No. 20", 18)).grid(
         row=0, column=0, padx=10, pady=10)
