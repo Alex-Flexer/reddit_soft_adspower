@@ -1,6 +1,7 @@
 from os import system
 from os.path import split as split_path
-from shutil import move, rmtree, make_archive, copy
+from shutil import move, rmtree, make_archive
+
 
 def obfuscate_client_app(original_path: str, final_path: str) -> None:
     system(f"pyarmor gen -O dist {original_path} --platform windows.x86_64")
@@ -22,6 +23,7 @@ def main():
     obfuscate_client_app(path_to_client_app, path_to_obfuscated_client_app)
     zip_directory(path_to_obfuscated_client_app, path_to_zipped_client_app)
     rmtree(path_to_obfuscated_client_app)
+
 
 if __name__ == '__main__':
     main()
