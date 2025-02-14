@@ -13,6 +13,7 @@ user_email = None
 
 from keyring import get_password
 
+
 def uniq_tkinter():
 
     global user_email
@@ -103,7 +104,7 @@ def uniq_tkinter():
                                     logger.log_message(str(res))
                                 else:
                                     logger.log_message(
-                                        "File have been successfully uniqueized")
+                                        "File have been successfully spoofed")
                                 flag = False
                                 break
                         if not flag:
@@ -173,7 +174,7 @@ def uniq_tkinter():
         logger.run()
 
     root = tk.Tk()
-    root.title("Uniqueizer")
+    root.title("Spoofer")
     root.resizable(False, False)
 
     tk.Label(root, text="Select file:", font=("Modern No. 20", 18)).grid(
@@ -195,14 +196,14 @@ def uniq_tkinter():
     function_var = tk.StringVar(value="Photo")
     tk.Radiobutton(
         root,
-        text="Uniqueize Video",
+        text="Spoof Video",
         font=("Modern No. 20", 18),
         variable=function_var, value="Video").\
         grid(row=2, column=0, padx=10, pady=5)
 
     tk.Radiobutton(
         root,
-        text="Uniqueize Photo",
+        text="Spoof Photo",
         font=("Modern No. 20", 18),
         variable=function_var,
         value="Photo").\

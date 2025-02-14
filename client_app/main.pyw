@@ -8,6 +8,7 @@ from sys import path
 
 path.insert(1, "tkinter_app")
 
+
 from tkinter_app import start_registration, create_window
 
 

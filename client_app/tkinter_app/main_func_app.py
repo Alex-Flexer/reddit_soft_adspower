@@ -26,6 +26,7 @@ import tkinter as tk
 from tkinter import Canvas
 from multiprocessing import Process
 
+
 class RoundedButton(Canvas):
     def __init__(self, parent, text, command=None, radius=25, btn_color="orange", text_color="white", **kwargs):
         width, height = 360, 60
@@ -65,6 +66,7 @@ class RoundedButton(Canvas):
     def on_leave(self, event):
         self.itemconfig(self.text_id, fill=self.text_color)
 
+
 def create_window():
     root = tk.Tk()
     root.title("Master Karma")
@@ -98,7 +100,7 @@ def create_window():
         ("Post Preparation with your titles", tkinter_reddit_big_post),
         ("Full post with your titles", tkinter_reddit_auto_post),
         ("Full post with parsed titles", tkinter_reddit_auto_post_auto_title),
-        ("Unify photo or video", uniq_tkinter),
+        ("Spoof photo or video", uniq_tkinter),
         ("Converters", tkinter_converters)
     ]
 
