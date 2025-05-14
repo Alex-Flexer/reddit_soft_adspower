@@ -3,10 +3,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from random import random
 from secrets import token_hex
+from dotenv import dotenv_values
 
-from functions.check_transaction import check_transaction
 import database.database_functions as db
 
 app = FastAPI()
@@ -23,19 +22,9 @@ async def send_home_page() -> FileResponse:
     return FileResponse("../server/static/html/index.html")
 
 
-# @app.get("/sign-up/")
-# async def send_registration_page() -> FileResponse:
-#     return FileResponse("../server/static/html/sign_up.html")
-
-
 @app.get("/confirm-code/")
 async def check_email_code() -> FileResponse:
     return FileResponse("../server/static/html/check_email_code.html")
-
-
-# @app.get("/login/")
-# async def send_login_page() -> FileResponse:
-#     return FileResponse("../server/static/html/login.html")
 
 
 @app.get("/tariffs/")
@@ -114,47 +103,6 @@ async def get_reddit_accounts(request: Request) -> JSONResponse:
             response_json["message"] = "User with this tg-nickname does not exist"
     return JSONResponse(content=response_json, status_code=200)
 
-
-# @app.post("/get/proxy/")
-# async def get_proxy(request: Request) -> JSONResponse:
-#     json: dict = await request.json()
-#     response_json: dict = {"result": False, "message": "Incorrect request"}
-
-#     if {"email"}.issubset(json.keys()):
-#         email = json['email']
-#         if db.check_reddit_account_exists(email=email):
-#             proxy_info = db.get_proxy(email)
-#             response_json["proxy"] = proxy_info
-#             response_json["massage"] = ""
-#             response_json['result'] = True
-#         else:
-#             response_json['massage'] =\
-#                 'Reddit account with this email does not exist'
-#     return JSONResponse(content=response_json, status_code=200)
-
-
-# @app.post("/get/price/")
-# async def send_price(request: Request) -> JSONResponse:
-#     json: dict = await request.json()
-#     response_json: dict = {"result": False, "message": "Incorrect request"}
-
-#     if {"email"}.issubset(json.keys()):
-#         email = json["email"]
-#         price =\
-#         299 if db.get_user_by_email(email).subscription_end_date is None\
-#         else 349
-
-#         new_price = price + round(random(), 3)
-
-#         db.update_subscription_price(email, new_price)
-
-#         response_json["result"] = True
-#         response_json["price"] = new_price
-#         response_json["message"] = ""
-
-#     return JSONResponse(content=response_json, status_code=200)
-
-
 @app.get("/get/crypto-token/")
 async def send_crypto_token() -> JSONResponse:
     response_json: dict = {"result": False,
@@ -168,30 +116,6 @@ async def send_crypto_token() -> JSONResponse:
         response_json["message"] = ""
 
     return JSONResponse(content=response_json, status_code=200)
-
-
-# @app.post("/sign-up/user/")
-# async def add_user(request: Request) -> JSONResponse:
-#     json = await request.json()
-
-#     response_json = {"result": False, "message": "Incorrect request"}
-
-#     if {"email", "password"}.issubset(json.keys()):
-#         email = json["email"]
-#         password = json["password"]
-
-#         if db.check_user_exists(email):
-#             response_json["message"] = "User already exists"
-#         else:
-#             result = db.add_new_user(email, password)
-#             if result:
-#                 response_json["message"] = ""
-#                 response_json["result"] = True
-#             else:
-#                 response_json["message"] = "Unknown sing up error"
-
-#     return JSONResponse(content=response_json, status_code=200)
-
 
 @app.post("/login/user/")
 async def login_user(request: Request) -> JSONResponse:
@@ -264,34 +188,6 @@ async def send_email_code(request: Request) -> JSONResponse:
     return JSONResponse(content=response_json, status_code=200)
 
 
-# @app.post("/check/transaction/")
-# async def check_user_transaction(request: Request) -> JSONResponse:
-#     json: dict = await request.json()
-#     response_json = {"result": False, "message": "Incorrect request"}
-
-#     if {"email"}.issubset(json.keys()):
-#         email = json["email"]
-
-#         if db.check_user_exists(email):
-#             try:
-#                 price = db.get_user_active_subscription_price(email)
-#                 transaction_verdict = await check_transaction(price)
-#             except Exception as e:
-#                 response_json["message"] = "Unknown checking transaction Error"
-#                 print(e)
-#             else:
-#                 if transaction_verdict:
-#                     db.renew_subscription(email)
-#                     response_json["result"] = True
-#                     response_json["message"] = ""
-#                 else:
-#                     response_json["message"] = "Transaction was not found"
-#         else:
-#             response_json["message"] = "Users with this email does not exists"
-
-#     return JSONResponse(content=response_json, status_code=200)
-
-
 @app.post("/check/user-credentials/")
 async def check_user_credentials(request: Request) -> JSONResponse:
     json: dict = await request.json()
@@ -320,12 +216,12 @@ async def add_reddit_account(request: Request) -> JSONResponse:
     json: dict = await request.json()
     response_json: dict[str, str] = {"result": False, "message": "Incorrect request"}
 
-    params_reqirements: set[str] = {
+    params_requirements: set[str] = {
         "user_email",
         "ads_id"
     }
 
-    if params_reqirements.issubset(json.keys()):
+    if params_requirements.issubset(json.keys()):
         if not db.check_user_exists(json["user_email"]):
             response_json["massage"] = "Users with this email does not exists"
         elif db.check_reddit_account_exists(json["ads_id"]):
@@ -344,7 +240,19 @@ async def add_reddit_account(request: Request) -> JSONResponse:
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', host="90.156.168.186",
-                port=443, reload=True, workers=12,
-                ssl_keyfile="/etc/letsencrypt/live/thekarmamaster.com/privkey.pem",
-                ssl_certfile="/etc/letsencrypt/live/thekarmamaster.com/fullchain.pem")
+    config = dotenv_values(".env")
+
+    HOST = config["HOST"]
+    PORT = config["PORT"]
+    SSL_KEYFILE_PATH = config["SSL_KEYFILE_PATH"]
+    SSL_CERTFILE_PATH = config["SSL_CERTFILE_PATH"]
+
+    uvicorn.run(
+        'main:app',
+        host=HOST,
+        port=PORT,
+        reload=True,
+        workers=12,
+        ssl_keyfile=SSL_KEYFILE_PATH,
+        ssl_certfile=SSL_CERTFILE_PATH
+    )

@@ -4,6 +4,7 @@ import sys
 from datetime import date
 from random import random, choice
 from secrets import token_hex
+from dotenv import dotenv_values
 
 from aiogram import Bot, Dispatcher, F, Router, html
 from aiogram.client.default import DefaultBotProperties
@@ -25,7 +26,9 @@ import database.database_functions as db
 
 form_router = Router()
 
-TOKEN = "7869269231:AAHTo6xfN8Dj-AKbJ3VkXvEJKURHk2hOuHI"
+config = dotenv_values(".env")
+
+TOKEN = config["USER_BOT_TOKEN"]
 
 BOT_COMMANDS = [
     BotCommand(command="start", description="Start bot"),

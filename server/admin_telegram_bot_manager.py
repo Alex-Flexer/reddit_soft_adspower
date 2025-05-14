@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 from datetime import date
+from dotenv import dotenv_values
 
 from aiogram import Bot, Dispatcher, Router, html
 from aiogram.client.default import DefaultBotProperties
@@ -19,7 +20,9 @@ import database.database_functions as db
 
 form_router = Router()
 
-TOKEN = "7639329112:AAGf0CHx9H8E1th-PY0c2KtGqvlChqu1jpk"
+config = dotenv_values(".env")
+
+TOKEN = config["ADMIN_BOT_TOKEN"]
 
 BOT_COMMANDS = [
     BotCommand(command="start", description="Start bot"),
